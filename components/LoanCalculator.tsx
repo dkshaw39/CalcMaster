@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Calendar, DollarSign, Percent, Clock } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
+import { SEO } from './SEO';
 
 interface AmortizationRow {
   date: string;
@@ -81,13 +82,14 @@ export const LoanCalculator: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
-      
+      <SEO 
+        title="Loan Calculator with Amortization Schedule"
+        description="Advanced loan calculator for personal loans, business loans, or general debt. View your detailed amortization schedule and monthly payment breakdown."
+        keywords="loan calculator, personal loan calculator, debt calculator, amortization schedule, monthly payment, interest calculator"
+      />
       {/* Header Section for SEO */}
-      <header className="text-center space-y-2 mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-900">Advanced Loan Calculator</h1>
-        <p className="text-slate-500 max-w-2xl mx-auto">
-          Calculate monthly payments, total interest, and view a complete amortization schedule for your personal, auto, or business loan.
-        </p>
+      <header className="text-center space-y-2 mb-6 pt-4">
+        <h1 className="text-2xl font-bold text-slate-900">Loan <span className="text-brand-600">Calculator</span></h1>
       </header>
 
       <div className="grid lg:grid-cols-3 gap-8">

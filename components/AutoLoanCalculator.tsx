@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Calendar, DollarSign, Percent, Clock, Car } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
+import { SEO } from './SEO';
 
 interface AmortizationRow {
   date: string;
@@ -102,13 +103,16 @@ export const AutoLoanCalculator: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
-      
-      {/* Header Section for SEO */}
-      <header className="text-center space-y-3 mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-900">Car Loan Calculator</h1>
-        <p className="text-slate-500 max-w-3xl mx-auto">
-          Use our free <strong>Car Loan Calculator</strong> to estimate your monthly car payments. 
-          Factor in trade-in value, sales tax, dealer fees, and interest rates to find the true cost of your next vehicle.
+      <SEO 
+        title="Car Loan Calculator with Trade-In & Taxes"
+        description="Calculate monthly car payments with our advanced Auto Loan Calculator. Includes inputs for trade-in value, sales tax, dealer fees, and down payment."
+        keywords="car loan calculator, auto loan calculator, car payment estimator, vehicle financing, car loan interest, auto loan amortization"
+      />
+      {/* Header Section */}
+      <header className="text-center mb-6 pt-4">
+        <h1 className="text-2xl font-bold text-slate-900">Car Loan <span className="text-brand-600">Calculator</span></h1>
+        <p className="text-sm text-slate-500 mt-1">
+          Estimate monthly payments including tax and trade-in.
         </p>
       </header>
 
@@ -399,13 +403,6 @@ export const AutoLoanCalculator: React.FC = () => {
                </p>
             </div>
         </div>
-
-        <h3 className="text-lg font-bold text-slate-800 mb-2">Common Car Loan Terms</h3>
-        <ul className="list-disc list-inside text-slate-600 space-y-2 mb-6">
-           <li><strong>36 Months (3 Years):</strong> Higher monthly payments, but lowest total interest.</li>
-           <li><strong>60 Months (5 Years):</strong> The standard car loan term. Balanced payments and interest.</li>
-           <li><strong>72-84 Months (6-7 Years):</strong> Lower monthly payments, but significantly higher total interest cost.</li>
-        </ul>
       </article>
 
     </div>

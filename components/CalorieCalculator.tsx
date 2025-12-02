@@ -1,12 +1,16 @@
+
 import React, { useState } from 'react';
 import { Button } from './Button';
+import { Utensils, Zap, ChevronRight } from 'lucide-react';
+import { SEO } from './SEO';
 
 export const CalorieCalculator: React.FC = () => {
-  const [age, setAge] = useState(25);
+  const [age, setAge] = useState(30);
   const [gender, setGender] = useState('male');
   const [height, setHeight] = useState(175);
-  const [weight, setWeight] = useState(70);
-  const [activity, setActivity] = useState(1.2);
+  const [weight, setWeight] = useState(75);
+  const [activity, setActivity] = useState(1.55);
+  const [goal, setGoal] = useState('maintain'); // cut, bulk, maintain
   const [result, setResult] = useState<number | null>(null);
 
   const calculate = () => {
@@ -18,113 +22,185 @@ export const CalorieCalculator: React.FC = () => {
       bmr -= 161;
     }
     
-    setResult(Math.round(bmr * activity));
+    const tdee = Math.round(bmr * activity);
+    
+    // Adjust for Goal
+    let target = tdee;
+    if (goal === 'cut') target = tdee - 500;
+    if (goal === 'bulk') target = tdee + 500;
+    
+    setResult(target);
+  };
+
+  // Macro Splits
+  const getMacros = (cals: number, type: 'balanced' | 'lowcarb' | 'highprotein') => {
+      // Balanced: 40C / 30P / 30F
+      // Low Carb: 20C / 40P / 40F
+      // High Protein: 30C / 40P / 30F
+      let ratios = { c: 0.4, p: 0.3, f: 0.3 };
+      if (type === 'lowcarb') ratios = { c: 0.2, p: 0.4, f: 0.4 };
+      if (type === 'highprotein') ratios = { c: 0.3, p: 0.4, f: 0.3 };
+
+      return {
+          c: Math.round((cals * ratios.c) / 4),
+          p: Math.round((cals * ratios.p) / 4),
+          f: Math.round((cals * ratios.f) / 9)
+      };
   };
 
   return (
-    <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-8">
-      <div className="md:col-span-2 bg-white rounded-2xl shadow-lg border border-slate-100 p-6">
-        <h2 className="text-xl font-semibold mb-6 text-slate-800 flex items-center gap-2">
-           <span className="w-1 h-6 bg-brand-500 rounded-full"></span>
-           Enter Your Details
-        </h2>
+    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in pb-12">
+      <SEO 
+        title="Calorie Calculator & Macro Planner"
+        description="Calculate your daily calorie needs for weight loss (cut), maintenance, or muscle gain (bulk). Get a personalized macro nutrient breakdown."
+        keywords="calorie calculator, macro calculator, tdee calculator, daily calorie intake, weight loss calculator, bulking calculator"
+      />
+      <header className="text-center mb-6 pt-4">
+        <h1 className="text-2xl font-bold text-slate-900">Calorie <span className="text-brand-600">Planner</span></h1>
+        <p className="text-sm text-slate-500 mt-1">Calculate calories, macros, and zig-zag schedules.</p>
+      </header>
+
+      <div className="grid lg:grid-cols-3 gap-8">
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Gender</label>
-              <div className="flex gap-2">
-                {['male', 'female'].map(g => (
-                  <button
-                    key={g}
-                    onClick={() => setGender(g)}
-                    className={`flex-1 py-2 px-4 rounded-lg capitalize text-sm font-medium transition ${gender === g ? 'bg-brand-600 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
-                  >
-                    {g}
-                  </button>
-                ))}
+        {/* Input Section */}
+        <div className="lg:col-span-1 space-y-6">
+           <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6">
+              <h2 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
+                 <Utensils size={18} className="text-brand-600"/> Your Stats
+              </h2>
+              
+              <div className="space-y-4">
+                  <div className="flex bg-slate-100 p-1 rounded-lg">
+                    <button onClick={() => setGender('male')} className={`flex-1 py-2 rounded-md font-bold transition ${gender === 'male' ? 'bg-white shadow text-brand-600' : 'text-slate-500'}`}>Male</button>
+                    <button onClick={() => setGender('female')} className={`flex-1 py-2 rounded-md font-bold transition ${gender === 'female' ? 'bg-white shadow text-brand-600' : 'text-slate-500'}`}>Female</button>
+                  </div>
+
+                  <div>
+                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Age</label>
+                     <input type="number" value={age} onChange={e => setAge(Number(e.target.value))} className="w-full p-3 bg-slate-50 border rounded-xl font-bold text-slate-700"/>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                     <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Height (cm)</label>
+                        <input type="number" value={height} onChange={e => setHeight(Number(e.target.value))} className="w-full p-3 bg-slate-50 border rounded-xl font-bold text-slate-700"/>
+                     </div>
+                     <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Weight (kg)</label>
+                        <input type="number" value={weight} onChange={e => setWeight(Number(e.target.value))} className="w-full p-3 bg-slate-50 border rounded-xl font-bold text-slate-700"/>
+                     </div>
+                  </div>
+
+                  <div>
+                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Activity</label>
+                     <select value={activity} onChange={e => setActivity(Number(e.target.value))} className="w-full p-3 bg-slate-50 border rounded-xl font-bold text-slate-700">
+                        <option value={1.2}>Sedentary (Office job)</option>
+                        <option value={1.375}>Light Exercise (1-2 days)</option>
+                        <option value={1.55}>Moderate Exercise (3-5 days)</option>
+                        <option value={1.725}>Heavy Exercise (6-7 days)</option>
+                        <option value={1.9}>Athlete (2x per day)</option>
+                     </select>
+                  </div>
+
+                  <div>
+                     <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Goal</label>
+                     <div className="grid grid-cols-3 gap-2">
+                        {['cut', 'maintain', 'bulk'].map(g => (
+                           <button 
+                             key={g} 
+                             onClick={() => setGoal(g)} 
+                             className={`py-2 rounded-lg font-bold text-xs uppercase border transition ${goal === g ? 'bg-brand-50 border-brand-500 text-brand-700' : 'border-slate-200 text-slate-500'}`}
+                           >
+                              {g}
+                           </button>
+                        ))}
+                     </div>
+                  </div>
+
+                  <Button onClick={calculate} size="lg" className="w-full mt-4">Calculate Plan</Button>
               </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Age (15-80)</label>
-              <input type="number" value={age} onChange={e => setAge(Number(e.target.value))} className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none"/>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Height (cm)</label>
-              <input type="number" value={height} onChange={e => setHeight(Number(e.target.value))} className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none"/>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Weight (kg)</label>
-              <input type="number" value={weight} onChange={e => setWeight(Number(e.target.value))} className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none"/>
-            </div>
-          </div>
-
-          <div>
-             <label className="block text-sm font-medium text-slate-700 mb-2">Activity Level</label>
-             <div className="space-y-2">
-               {[
-                 { val: 1.2, label: 'Sedentary', desc: 'Little or no exercise' },
-                 { val: 1.375, label: 'Light', desc: 'Exercise 1-3 times/week' },
-                 { val: 1.55, label: 'Moderate', desc: 'Exercise 4-5 times/week' },
-                 { val: 1.725, label: 'Active', desc: 'Daily exercise or intense exercise 3-4 times/week' },
-                 { val: 1.9, label: 'Very Active', desc: 'Intense exercise 6-7 times/week' },
-               ].map((opt) => (
-                 <button
-                    key={opt.val}
-                    onClick={() => setActivity(opt.val)}
-                    className={`w-full text-left p-3 rounded-lg border transition ${activity === opt.val ? 'border-brand-500 bg-brand-50 ring-1 ring-brand-500' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'}`}
-                 >
-                   <div className={`text-sm font-semibold ${activity === opt.val ? 'text-brand-700' : 'text-slate-700'}`}>{opt.label}</div>
-                   <div className="text-xs text-slate-500">{opt.desc}</div>
-                 </button>
-               ))}
-             </div>
-          </div>
-        </div>
-
-        <div className="mt-8">
-           <Button onClick={calculate} className="w-full md:w-auto px-8 py-3 text-lg bg-brand-600 hover:bg-brand-700 text-white rounded-xl shadow-lg shadow-brand-200">
-             Calculate Calories
-           </Button>
-        </div>
-      </div>
-
-      <div className="md:col-span-1 space-y-4">
-        <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden">
-           <div className="absolute top-0 right-0 p-4 opacity-10">
-             <svg width="100" height="100" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
            </div>
-           <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-wide">Maintenance Calories</h3>
-           <div className="text-5xl font-bold mb-1">{result ? result.toLocaleString() : '--'}</div>
-           <div className="text-slate-400 text-sm">Calories / day</div>
         </div>
 
-        {result && (
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-            <h4 className="font-semibold text-slate-800 mb-4">Weight Goals</h4>
-            <div className="space-y-4">
-               <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg border border-green-100">
-                  <span className="text-sm font-medium text-green-800">Mild Weight Loss</span>
-                  <span className="font-bold text-green-700">{Math.round(result * 0.9)}</span>
+        {/* Results Section */}
+        <div className="lg:col-span-2 space-y-6">
+           {result ? (
+               <>
+                 {/* Top Hero */}
+                 <div className="bg-slate-900 text-white rounded-2xl p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                     <div className="relative z-10">
+                        <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Daily Target</div>
+                        <div className="text-5xl font-bold tracking-tight mb-2">{result.toLocaleString()}</div>
+                        <div className="text-sm text-slate-400">Calories per day</div>
+                     </div>
+                     <div className="relative z-10 flex gap-4">
+                         <div className="text-center">
+                            <div className="text-2xl font-bold text-brand-400">{Math.round(result * 7).toLocaleString()}</div>
+                            <div className="text-[10px] uppercase font-bold text-slate-500">Weekly</div>
+                         </div>
+                     </div>
+                     {/* BG Decor */}
+                     <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none">
+                        <Zap size={150} />
+                     </div>
+                 </div>
+
+                 {/* Macros Grid */}
+                 <div className="grid md:grid-cols-3 gap-4">
+                    {[
+                        { name: 'Balanced', type: 'balanced', color: 'bg-blue-500' },
+                        { name: 'Low Carb', type: 'lowcarb', color: 'bg-emerald-500' },
+                        { name: 'High Protein', type: 'highprotein', color: 'bg-rose-500' }
+                    ].map((plan: any) => {
+                        const m = getMacros(result, plan.type);
+                        return (
+                            <div key={plan.name} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition">
+                                <div className={`h-1 w-8 rounded-full mb-3 ${plan.color}`}></div>
+                                <h3 className="font-bold text-slate-800 mb-2">{plan.name}</h3>
+                                <div className="space-y-1 text-sm">
+                                    <div className="flex justify-between text-slate-600"><span>Carbs</span> <span className="font-bold text-slate-900">{m.c}g</span></div>
+                                    <div className="flex justify-between text-slate-600"><span>Protein</span> <span className="font-bold text-slate-900">{m.p}g</span></div>
+                                    <div className="flex justify-between text-slate-600"><span>Fats</span> <span className="font-bold text-slate-900">{m.f}g</span></div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                 </div>
+
+                 {/* Zig Zag Schedule */}
+                 <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+                    <div className="p-4 bg-slate-50 border-b border-slate-100">
+                        <h3 className="font-bold text-slate-800 text-sm uppercase tracking-wide">Zig-Zag Schedule (Prevents Adaptation)</h3>
+                    </div>
+                    <div className="grid grid-cols-7 divide-x divide-slate-100">
+                        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => {
+                            // ZigZag logic: High days (+10-15%), Low days (-10-15%)
+                            // Pattern: High, Low, High, Low, High, Medium, Medium
+                            let mult = 1.0;
+                            let style = "text-slate-600";
+                            if ([0, 2, 4].includes(i)) { mult = 1.15; style = "text-red-500 font-bold"; } // High
+                            else if ([1, 3].includes(i)) { mult = 0.85; style = "text-blue-500 font-bold"; } // Low
+                            else { mult = 1.0; style = "text-slate-900 font-medium"; }
+
+                            return (
+                                <div key={day} className="p-4 text-center">
+                                    <div className="text-xs font-bold text-slate-400 uppercase mb-1">{day}</div>
+                                    <div className={`text-sm ${style}`}>{Math.round(result * mult)}</div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                 </div>
+
+               </>
+           ) : (
+               <div className="h-full flex items-center justify-center text-slate-400 p-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                   <div className="text-center">
+                       <Utensils size={48} className="mx-auto mb-4 opacity-50"/>
+                       <p>Enter your details to generate a plan</p>
+                   </div>
                </div>
-               <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg border border-yellow-100">
-                  <span className="text-sm font-medium text-yellow-800">Weight Loss</span>
-                  <span className="font-bold text-yellow-700">{Math.round(result * 0.8)}</span>
-               </div>
-               <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg border border-red-100">
-                  <span className="text-sm font-medium text-red-800">Extreme Loss</span>
-                  <span className="font-bold text-red-700">{Math.round(result * 0.61)}</span>
-               </div>
-               <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg border border-blue-100">
-                  <span className="text-sm font-medium text-blue-800">Mild Weight Gain</span>
-                  <span className="font-bold text-blue-700">{Math.round(result * 1.1)}</span>
-               </div>
-            </div>
-          </div>
-        )}
+           )}
+        </div>
       </div>
     </div>
   );

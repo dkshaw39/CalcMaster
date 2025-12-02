@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { SEO } from './SEO';
 
 export const MortgageCalculator: React.FC = () => {
   const [homeValue, setHomeValue] = useState(400000);
@@ -68,12 +69,17 @@ export const MortgageCalculator: React.FC = () => {
   ].filter(d => d.value > 0) : [];
 
   const COLORS = ['#4f46e5', '#0ea5e9', '#f59e0b', '#ef4444'];
+  const inputClass = "w-full pl-8 p-3 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition font-bold shadow-sm";
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">Advanced Mortgage Calculator</h1>
-        <p className="text-slate-500 mt-2">Estimate your monthly payments including taxes, insurance, and HOA.</p>
+      <SEO 
+        title="Mortgage Calculator with Taxes, Insurance & HOA"
+        description="Calculate your monthly mortgage payment including principal, interest, property taxes, homeowner's insurance, and HOA fees. View amortization and interest costs."
+        keywords="mortgage calculator, amortization schedule, home loan calculator, pmi calculator, mortgage taxes insurance, monthly payment estimator"
+      />
+      <div className="text-center mb-6 pt-4">
+        <h1 className="text-2xl font-bold text-slate-900">Mortgage <span className="text-brand-600">Calculator</span></h1>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
@@ -88,7 +94,7 @@ export const MortgageCalculator: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Home Price</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
                 <input 
                   type="number" 
                   value={homeValue}
@@ -98,7 +104,7 @@ export const MortgageCalculator: React.FC = () => {
                     // Update down payment amount based on kept percentage
                     setDownPayment(Math.round((downPaymentPercent / 100) * val));
                   }}
-                  className="w-full pl-8 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"
+                  className={inputClass}
                 />
               </div>
             </div>
@@ -107,12 +113,12 @@ export const MortgageCalculator: React.FC = () => {
               <label className="block text-sm font-medium text-slate-700 mb-1">Down Payment</label>
               <div className="flex gap-2">
                  <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
                     <input 
                       type="number" 
                       value={downPayment}
                       onChange={e => handleAmountChange(Number(e.target.value))}
-                      className="w-full pl-8 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"
+                      className={inputClass}
                     />
                  </div>
                  <div className="relative w-24">
@@ -120,9 +126,9 @@ export const MortgageCalculator: React.FC = () => {
                       type="number" 
                       value={downPaymentPercent}
                       onChange={e => handlePercentChange(Number(e.target.value))}
-                      className="w-full pr-6 pl-2 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition text-center"
+                      className="w-full pr-6 pl-2 p-3 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition text-center font-bold shadow-sm"
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">%</span>
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">%</span>
                  </div>
               </div>
             </div>
@@ -132,7 +138,7 @@ export const MortgageCalculator: React.FC = () => {
               <select 
                 value={loanTerm}
                 onChange={e => setLoanTerm(Number(e.target.value))}
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"
+                className="w-full p-3 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition font-bold shadow-sm"
               >
                 <option value={10}>10 Years</option>
                 <option value={15}>15 Years</option>
@@ -149,9 +155,9 @@ export const MortgageCalculator: React.FC = () => {
                   step="0.01"
                   value={interestRate}
                   onChange={e => setInterestRate(Number(e.target.value))}
-                  className="w-full pr-8 pl-3 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"
+                  className="w-full pr-8 pl-3 p-3 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition font-bold shadow-sm"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">%</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">%</span>
               </div>
             </div>
           </div>
@@ -165,36 +171,36 @@ export const MortgageCalculator: React.FC = () => {
              <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Property Tax / Year</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
                 <input 
                   type="number" 
                   value={propertyTax}
                   onChange={e => setPropertyTax(Number(e.target.value))}
-                  className="w-full pl-8 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"
+                  className={inputClass}
                 />
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Home Insurance / Year</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
                 <input 
                   type="number" 
                   value={insurance}
                   onChange={e => setInsurance(Number(e.target.value))}
-                  className="w-full pl-8 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"
+                  className={inputClass}
                 />
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">HOA Fees / Month</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
                 <input 
                   type="number" 
                   value={hoa}
                   onChange={e => setHoa(Number(e.target.value))}
-                  className="w-full pl-8 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"
+                  className={inputClass}
                 />
               </div>
             </div>

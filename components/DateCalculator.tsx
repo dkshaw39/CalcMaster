@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import { differenceInYears, differenceInMonths, differenceInDays, addYears, addMonths, addDays, format, differenceInBusinessDays } from 'date-fns';
+import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { SEO } from './SEO';
 
 export const DateCalculator: React.FC = () => {
   const [tab, setTab] = useState(0);
@@ -18,8 +20,6 @@ export const DateCalculator: React.FC = () => {
   const calculateDiff = () => {
     const start = new Date(date1);
     const end = new Date(date2);
-    
-    // Check if valid
     if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
 
     const years = differenceInYears(end, start);
@@ -34,115 +34,155 @@ export const DateCalculator: React.FC = () => {
   const calculateAdd = () => {
      const start = new Date(startDate);
      const amt = operator === 'add' ? amount : -amount;
-     
      let res = start;
      if (unit === 'years') res = addYears(start, amt);
      if (unit === 'months') res = addMonths(start, amt);
      if (unit === 'days') res = addDays(start, amt);
-     
      return res;
   };
 
   const diff = calculateDiff();
   const addedDate = calculateAdd();
 
+  // Styles
+  const inputContainerClass = "bg-white border border-slate-300 rounded-lg p-3 flex items-center shadow-sm focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 transition";
+  const fieldClass = "flex-1 w-full bg-transparent outline-none font-bold text-slate-900 !text-black";
+
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-12">
-      <header className="text-center mb-6 pt-4">
+    <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in pb-12">
+      <SEO 
+        title="Date Calculator - Age, Difference & Add Days"
+        description="Calculate the duration between two dates (years, months, days) or add/subtract time from a date to find a future or past date."
+        keywords="date calculator, age calculator, days between dates, add days to date, date duration, business days calculator"
+      />
+      <header className="mb-2 pt-2">
         <h1 className="text-2xl font-bold text-slate-900">Date <span className="text-brand-600">Calculator</span></h1>
-        <p className="text-sm text-slate-500 mt-1">Calculate age, duration, or add time to a date.</p>
+        <p className="text-sm text-slate-500 mt-1">Calculate duration or add time.</p>
       </header>
-      
-      <div className="flex justify-center mb-8">
-        <div className="bg-white p-1 rounded-xl shadow-sm border border-slate-200 flex gap-1">
-          {['Age & Difference', 'Add / Subtract Days'].map((t, i) => (
-             <button
-               key={i}
-               onClick={() => setTab(i)}
-               className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${tab === i ? 'bg-brand-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50'}`}
-             >
-               {t}
-             </button>
-          ))}
-        </div>
-      </div>
 
-      <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
-         {tab === 0 && diff && (
-            <div className="grid md:grid-cols-2 gap-12">
-               <div className="space-y-6">
-                  <div>
-                     <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Start Date / Date of Birth</label>
-                     <input type="date" value={date1} onChange={e => setDate1(e.target.value)} className="w-full p-3 bg-slate-50 border rounded-xl font-bold text-slate-800"/>
-                  </div>
-                  <div>
-                     <label className="block text-xs font-bold text-slate-500 uppercase mb-2">End Date</label>
-                     <input type="date" value={date2} onChange={e => setDate2(e.target.value)} className="w-full p-3 bg-slate-50 border rounded-xl font-bold text-slate-800"/>
-                  </div>
-               </div>
-               
-               <div className="flex flex-col justify-center space-y-4">
-                  <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-lg">
-                     <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Duration</div>
-                     <div className="text-3xl font-bold tracking-tight mb-1">
-                        {diff.years}y {diff.months}m {diff.days}d
+      <div className="grid lg:grid-cols-12 gap-6 items-start">
+         
+         {/* Left: Settings */}
+         <div className="lg:col-span-4 space-y-6">
+             <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
+                 <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2 border-b border-slate-100 pb-4">
+                    <Clock size={18} className="text-brand-600"/> Settings
+                 </h2>
+                 
+                 <div className="space-y-6">
+                     <div>
+                        <div className="flex bg-slate-100 p-1 rounded-lg mb-6">
+                          {['Difference', 'Add / Subtract'].map((t, i) => (
+                             <button
+                               key={i}
+                               onClick={() => setTab(i)}
+                               className={`flex-1 py-2 rounded-md text-sm font-bold transition ${tab === i ? 'bg-white shadow text-brand-600' : 'text-slate-500 hover:text-slate-800'}`}
+                             >
+                               {t}
+                             </button>
+                          ))}
+                        </div>
                      </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                     <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <div className="text-slate-500 text-xs font-bold uppercase mb-1">Total Days</div>
-                        <div className="text-xl font-bold text-slate-800">{diff.totalDays.toLocaleString()}</div>
-                     </div>
-                     <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <div className="text-slate-500 text-xs font-bold uppercase mb-1">Business Days</div>
-                        <div className="text-xl font-bold text-slate-800">{diff.businessDays.toLocaleString()}</div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         )}
 
-         {tab === 1 && (
-             <div className="grid md:grid-cols-2 gap-12 items-center">
-                <div className="space-y-6">
-                   <div>
-                     <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Start Date</label>
-                     <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full p-3 bg-slate-50 border rounded-xl font-bold text-slate-800"/>
-                   </div>
-                   <div className="flex gap-4">
-                      <div className="flex-1">
-                         <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Operation</label>
-                         <div className="flex bg-slate-100 p-1 rounded-lg">
-                            <button onClick={() => setOperator('add')} className={`flex-1 py-2 rounded font-bold text-sm ${operator === 'add' ? 'bg-white shadow text-brand-600' : 'text-slate-500'}`}>Add</button>
-                            <button onClick={() => setOperator('sub')} className={`flex-1 py-2 rounded font-bold text-sm ${operator === 'sub' ? 'bg-white shadow text-brand-600' : 'text-slate-500'}`}>Subtract</button>
-                         </div>
-                      </div>
-                      <div className="w-24">
-                         <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Amount</label>
-                         <input type="number" value={amount} onChange={e => setAmount(Number(e.target.value))} className="w-full p-2.5 bg-slate-50 border rounded-lg font-bold text-center"/>
-                      </div>
-                   </div>
-                   <div>
-                     <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Unit</label>
-                     <div className="flex gap-2">
-                        {['days', 'months', 'years'].map(u => (
-                           <button key={u} onClick={() => setUnit(u)} className={`flex-1 py-3 border rounded-xl font-bold capitalize transition ${unit === u ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>{u}</button>
-                        ))}
-                     </div>
-                   </div>
-                </div>
-
-                <div className="bg-slate-900 text-white p-8 rounded-2xl shadow-xl text-center">
-                   <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Resulting Date</div>
-                   <div className="text-4xl font-bold tracking-tight text-brand-400 mb-2">
-                      {format(addedDate, 'MMM do, yyyy')}
-                   </div>
-                   <div className="text-lg text-slate-300">
-                      {format(addedDate, 'EEEE')}
-                   </div>
-                </div>
+                     {tab === 0 ? (
+                        <div className="space-y-4">
+                           <div>
+                              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Start Date</label>
+                              <div className={inputContainerClass}>
+                                 <input type="date" value={date1} onChange={e => setDate1(e.target.value)} className={fieldClass} style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}/>
+                              </div>
+                           </div>
+                           <div>
+                              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">End Date</label>
+                              <div className={inputContainerClass}>
+                                 <input type="date" value={date2} onChange={e => setDate2(e.target.value)} className={fieldClass} style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}/>
+                              </div>
+                           </div>
+                        </div>
+                     ) : (
+                        <div className="space-y-4">
+                           <div>
+                              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Start Date</label>
+                              <div className={inputContainerClass}>
+                                 <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className={fieldClass} style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}/>
+                              </div>
+                           </div>
+                           <div>
+                              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Operation</label>
+                              <div className="flex gap-2">
+                                 <button onClick={() => setOperator('add')} className={`flex-1 py-3 rounded-lg font-bold border transition ${operator === 'add' ? 'bg-brand-50 border-brand-500 text-brand-700' : 'border-slate-200 text-slate-600'}`}>Add</button>
+                                 <button onClick={() => setOperator('sub')} className={`flex-1 py-3 rounded-lg font-bold border transition ${operator === 'sub' ? 'bg-brand-50 border-brand-500 text-brand-700' : 'border-slate-200 text-slate-600'}`}>Subtract</button>
+                              </div>
+                           </div>
+                           <div className="flex gap-4">
+                              <div className="flex-1">
+                                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Amount</label>
+                                 <div className={inputContainerClass}>
+                                    <input type="number" value={amount} onChange={e => setAmount(Number(e.target.value))} className={fieldClass} style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}/>
+                                 </div>
+                              </div>
+                              <div className="w-32">
+                                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Unit</label>
+                                 <div className={inputContainerClass}>
+                                    <select value={unit} onChange={e => setUnit(e.target.value)} className={`${fieldClass} cursor-pointer bg-transparent`} style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}>
+                                       <option value="days">Days</option>
+                                       <option value="months">Months</option>
+                                       <option value="years">Years</option>
+                                    </select>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     )}
+                 </div>
              </div>
-         )}
+         </div>
+
+         {/* Right: Results */}
+         <div className="lg:col-span-8 space-y-6">
+             {tab === 0 && diff ? (
+                 <>
+                    <div className="bg-slate-900 text-white rounded-2xl p-8 shadow-xl flex flex-col justify-center h-[200px] relative overflow-hidden">
+                       <div className="relative z-10">
+                          <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">Total Duration</div>
+                          <div className="text-5xl font-bold tracking-tight mb-2">
+                             {diff.years}y {diff.months}m {diff.days}d
+                          </div>
+                          <div className="text-brand-400 font-bold">{diff.totalDays.toLocaleString()} total days</div>
+                       </div>
+                       <div className="absolute right-0 bottom-0 p-6 opacity-5">
+                          <Calendar size={150}/>
+                       </div>
+                    </div>
+                    <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
+                       <h3 className="font-bold text-slate-800 mb-4">Breakdown</h3>
+                       <div className="grid grid-cols-2 gap-4">
+                          <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-center">
+                             <div className="text-3xl font-bold text-slate-900 mb-1">{diff.totalDays.toLocaleString()}</div>
+                             <div className="text-xs text-slate-500 font-bold uppercase">Days</div>
+                          </div>
+                          <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-center">
+                             <div className="text-3xl font-bold text-slate-900 mb-1">{diff.businessDays.toLocaleString()}</div>
+                             <div className="text-xs text-slate-500 font-bold uppercase">Business Days</div>
+                          </div>
+                       </div>
+                    </div>
+                 </>
+             ) : (
+                 <div className="bg-slate-900 text-white rounded-2xl p-10 shadow-xl flex flex-col justify-center items-center h-[300px] relative">
+                    <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Resulting Date</div>
+                    <div className="text-6xl font-bold tracking-tight mb-2 text-center">
+                       {format(addedDate, 'MMM do')}
+                    </div>
+                    <div className="text-2xl text-brand-400 font-medium">
+                       {format(addedDate, 'yyyy')}
+                    </div>
+                    <div className="text-slate-500 font-bold mt-4 bg-white/10 px-4 py-1 rounded-full text-sm">
+                       {format(addedDate, 'EEEE')}
+                    </div>
+                 </div>
+             )}
+         </div>
       </div>
     </div>
   );

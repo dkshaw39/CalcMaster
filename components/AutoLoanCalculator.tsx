@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { Calendar, DollarSign, Percent, Clock, Car } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { Calendar, DollarSign, Car, Percent } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
 import { SEO } from './SEO';
 
@@ -19,27 +19,18 @@ export const AutoLoanCalculator: React.FC = () => {
   const [downPayment, setDownPayment] = useState(5000);
   const [tradeInValue, setTradeInValue] = useState(0);
   const [interestRate, setInterestRate] = useState(6.5); // APR
-  const [loanTermMonths, setLoanTermMonths] = useState(60); // Standard car loan terms are in months (36, 48, 60, 72)
+  const [loanTermMonths, setLoanTermMonths] = useState(60); 
   const [salesTaxRate, setSalesTaxRate] = useState(7.0);
-  const [fees, setFees] = useState(450); // Title, Reg, Doc fees
+  const [fees, setFees] = useState(450); 
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
 
   const [showSchedule, setShowSchedule] = useState(false);
 
   // Calculations
   const calculations = useMemo(() => {
-    // Logic: Sales Tax is often calculated on (Price - TradeIn) in many states.
-    // We will assume tax is calculated on the net price after trade-in for a generic "Advanced" calculator.
     const taxableAmount = Math.max(0, vehiclePrice - tradeInValue);
     const salesTaxAmount = taxableAmount * (salesTaxRate / 100);
-    
-    // Total Price of the car "out the door" before down payment
     const totalPrice = vehiclePrice + salesTaxAmount + fees;
-    
-    // Amount to Finance
-    // (Vehicle Price + Tax + Fees) - Down Payment - Trade In
-    // Note: Trade In is already subtracted from price effectively, but purely for financing amount:
-    // Amount = (Vehicle Price + Tax + Fees) - Down Payment - Trade In
     let loanAmount = (vehiclePrice + salesTaxAmount + fees) - downPayment - tradeInValue;
     if (loanAmount < 0) loanAmount = 0;
 
@@ -58,7 +49,6 @@ export const AutoLoanCalculator: React.FC = () => {
 
     if (isNaN(monthlyPayment) || !isFinite(monthlyPayment)) monthlyPayment = 0;
 
-    // Generate Schedule
     const schedule: AmortizationRow[] = [];
     let currentBalance = principal;
     let totalInterest = 0;
@@ -89,11 +79,10 @@ export const AutoLoanCalculator: React.FC = () => {
       totalPayment: monthlyPayment * totalMonths,
       totalInterest,
       schedule,
-      totalCost: totalPrice // Total cost of vehicle including cash paid
+      totalCost: totalPrice 
     };
   }, [vehiclePrice, downPayment, tradeInValue, interestRate, loanTermMonths, salesTaxRate, fees, startDate]);
 
-  // Chart Data
   const pieData = [
     { name: 'Loan Principal', value: calculations.loanAmount },
     { name: 'Total Interest', value: calculations.totalInterest },
@@ -101,215 +90,230 @@ export const AutoLoanCalculator: React.FC = () => {
   
   const COLORS = ['#0284c7', '#f59e0b'];
 
+  // Flexbox Input Styles
+  const inputContainerClass = "flex items-center bg-white border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 overflow-hidden transition shadow-sm h-12";
+  const iconClass = "pl-3 pr-2 text-slate-400";
+  const suffixClass = "pr-3 pl-2 text-slate-500 font-bold select-none bg-slate-50 h-full flex items-center border-l border-slate-100";
+  const fieldClass = "flex-1 w-full h-full p-2 outline-none font-bold text-black min-w-0 bg-transparent !text-black";
+
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
+    <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in">
       <SEO 
         title="Car Loan Calculator with Trade-In & Taxes"
         description="Calculate monthly car payments with our advanced Auto Loan Calculator. Includes inputs for trade-in value, sales tax, dealer fees, and down payment."
         keywords="car loan calculator, auto loan calculator, car payment estimator, vehicle financing, car loan interest, auto loan amortization"
       />
-      {/* Header Section */}
-      <header className="text-center mb-6 pt-4">
+      <div className="mb-2 pt-2">
         <h1 className="text-2xl font-bold text-slate-900">Car Loan <span className="text-brand-600">Calculator</span></h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Estimate monthly payments including tax and trade-in.
-        </p>
-      </header>
+        <p className="text-sm text-slate-500">Finance breakdown including tax and fees.</p>
+      </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-12 gap-6 items-start">
         
-        {/* Left Column: Inputs */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 md:p-8 h-fit">
-          <h2 className="text-xl font-semibold mb-6 text-slate-800 flex items-center gap-2">
-            <span className="w-1 h-6 bg-brand-600 rounded-full"></span>
-            Vehicle Details
-          </h2>
-          
-          <div className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Vehicle Price</label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition">
-                  <Car size={18} />
-                </div>
-                <input 
-                  type="number" 
-                  value={vehiclePrice} 
-                  onChange={(e) => setVehiclePrice(Number(e.target.value))}
-                  className="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium text-slate-900"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+        {/* Left Column: Inputs (Sidebar) */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 md:p-6">
+            <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2 border-b border-slate-100 pb-4">
+              <Car size={18} className="text-brand-600"/> Vehicle Details
+            </h2>
+            
+            <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Down Payment</label>
-                <div className="relative">
-                   <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><DollarSign size={16}/></div>
-                   <input 
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Vehicle Price</label>
+                <div className={inputContainerClass}>
+                  <div className={iconClass}><Car size={18} /></div>
+                  <input 
                     type="number" 
-                    value={downPayment} 
-                    onChange={(e) => setDownPayment(Number(e.target.value))}
-                    className="w-full pl-8 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium"
+                    value={vehiclePrice} 
+                    onChange={(e) => setVehiclePrice(Number(e.target.value))}
+                    className={fieldClass}
+                    style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
                   />
                 </div>
               </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Down Payment</label>
+                  <div className={inputContainerClass}>
+                     <div className={iconClass}><DollarSign size={16}/></div>
+                     <input 
+                      type="number" 
+                      value={downPayment} 
+                      onChange={(e) => setDownPayment(Number(e.target.value))}
+                      className={fieldClass}
+                      style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Trade-in</label>
+                  <div className={inputContainerClass}>
+                     <div className={iconClass}><DollarSign size={16}/></div>
+                     <input 
+                      type="number" 
+                      value={tradeInValue} 
+                      onChange={(e) => setTradeInValue(Number(e.target.value))}
+                      className={fieldClass}
+                      style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Trade-in Value</label>
-                <div className="relative">
-                   <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><DollarSign size={16}/></div>
-                   <input 
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Sales Tax</label>
+                <div className={inputContainerClass}>
+                  <input 
                     type="number" 
-                    value={tradeInValue} 
-                    onChange={(e) => setTradeInValue(Number(e.target.value))}
-                    className="w-full pl-8 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium"
+                    value={salesTaxRate} 
+                    onChange={(e) => setSalesTaxRate(Number(e.target.value))}
+                    className={fieldClass}
+                    style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                  />
+                  <div className={suffixClass}>%</div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Fees (Title/Reg)</label>
+                <div className={inputContainerClass}>
+                  <div className={iconClass}><DollarSign size={16}/></div>
+                  <input 
+                    type="number" 
+                    value={fees} 
+                    onChange={(e) => setFees(Number(e.target.value))}
+                    className={fieldClass}
+                    style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
                   />
                 </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Sales Tax (%)</label>
-              <div className="relative">
-                <input 
-                  type="number" 
-                  value={salesTaxRate} 
-                  onChange={(e) => setSalesTaxRate(Number(e.target.value))}
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium"
-                />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">%</span>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Fees (Title, Reg, Doc)</label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
-                <input 
-                  type="number" 
-                  value={fees} 
-                  onChange={(e) => setFees(Number(e.target.value))}
-                  className="w-full pl-8 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium"
-                />
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-slate-100">
-                <h3 className="text-sm font-semibold text-slate-900 mb-4">Loan Terms</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 uppercase mb-1">Interest (APR)</label>
-                    <div className="relative">
-                       <input 
-                        type="number" 
-                        step="0.1"
-                        value={interestRate} 
-                        onChange={(e) => setInterestRate(Number(e.target.value))}
-                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium"
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
+              <div className="pt-4 border-t border-slate-100">
+                  <h3 className="text-sm font-bold text-slate-800 mb-4">Loan Terms</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Interest (APR)</label>
+                      <div className={inputContainerClass}>
+                         <input 
+                          type="number" 
+                          step="0.1"
+                          value={interestRate} 
+                          onChange={(e) => setInterestRate(Number(e.target.value))}
+                          className={fieldClass}
+                          style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                        />
+                        <div className={suffixClass}>%</div>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Term</label>
+                      <div className={inputContainerClass}>
+                          <select 
+                              value={loanTermMonths}
+                              onChange={(e) => setLoanTermMonths(Number(e.target.value))}
+                              className={`${fieldClass} bg-transparent cursor-pointer`}
+                              style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                          >
+                              <option value={36}>36 Mo</option>
+                              <option value={48}>48 Mo</option>
+                              <option value={60}>60 Mo</option>
+                              <option value={72}>72 Mo</option>
+                              <option value={84}>84 Mo</option>
+                          </select>
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 uppercase mb-1">Term (Months)</label>
-                    <select 
-                        value={loanTermMonths}
-                        onChange={(e) => setLoanTermMonths(Number(e.target.value))}
-                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium"
-                    >
-                        <option value={36}>36 Months</option>
-                        <option value={48}>48 Months</option>
-                        <option value={60}>60 Months</option>
-                        <option value={72}>72 Months</option>
-                        <option value={84}>84 Months</option>
-                    </select>
-                  </div>
-                </div>
-            </div>
-            
-             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">First Payment Date</label>
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Calendar size={16}/></div>
-                <input 
-                  type="date" 
-                  value={startDate} 
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium text-slate-900"
-                />
               </div>
-            </div>
+              
+               <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Start Date</label>
+                <div className={inputContainerClass}>
+                  <div className={iconClass}><Calendar size={16}/></div>
+                  <input 
+                    type="date" 
+                    value={startDate} 
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className={fieldClass}
+                    style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                  />
+                </div>
+              </div>
 
+            </div>
           </div>
         </div>
 
-        {/* Right Column: Results & Visualization */}
-        <div className="lg:col-span-2 space-y-6">
-          
-          {/* Summary Cards */}
-          <div className="grid md:grid-cols-3 gap-4">
+        {/* Right Column: Results (Dashboard) */}
+        <div className="lg:col-span-8 space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
              <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition">
+                <div className="relative z-10">
+                  <p className="text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">Monthly Payment</p>
+                  <div className="text-3xl lg:text-4xl font-bold tracking-tight mb-1">
+                    ${calculations.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                  </div>
+                  <p className="text-xs text-brand-400 font-medium">{loanTermMonths} month term</p>
+                </div>
+                <div className="absolute right-0 bottom-0 p-4 opacity-10 group-hover:opacity-20 transition">
                   <Car size={80} />
                 </div>
-                <div className="text-slate-400 text-xs uppercase tracking-widest font-semibold mb-2">Monthly Payment</div>
-                <div className="text-3xl lg:text-4xl font-bold tracking-tight">
-                  ${calculations.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                </div>
-                <div className="text-xs text-slate-400 mt-1">For {loanTermMonths} months</div>
              </div>
 
              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                <div className="text-slate-500 text-xs uppercase tracking-widest font-semibold mb-2">Total Interest</div>
-                <div className="text-2xl font-bold text-amber-500">
-                  ${calculations.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                <div>
+                  <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Total Interest</p>
+                  <div className="text-2xl font-bold text-amber-500">
+                    ${calculations.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                  </div>
                 </div>
-                <div className="text-xs text-slate-400 mt-2">Cost of financing</div>
+                <p className="text-xs text-slate-400 mt-2">Cost of financing</p>
              </div>
 
              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                <div className="text-slate-500 text-xs uppercase tracking-widest font-semibold mb-2">Loan Amount</div>
-                <div className="text-2xl font-bold text-brand-600">
-                  ${calculations.loanAmount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                <div>
+                  <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Amount Financed</p>
+                  <div className="text-2xl font-bold text-slate-800">
+                    ${calculations.loanAmount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                  </div>
                 </div>
-                <div className="text-xs text-slate-400 mt-2">After down payment & trade-in</div>
+                <p className="text-xs text-slate-400 mt-2">Loan principal</p>
              </div>
           </div>
 
-          {/* Breakdown Section */}
           <div className="grid md:grid-cols-2 gap-6">
-             <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6">
-                 <h3 className="text-lg font-semibold text-slate-800 mb-4">Total Cost Breakdown</h3>
+             <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
+                 <h3 className="text-lg font-bold text-slate-800 mb-4">Total Cost Breakdown</h3>
                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between items-center p-2 bg-slate-50 rounded">
-                       <span className="text-slate-600">Vehicle Price</span>
-                       <span className="font-semibold text-slate-900">${vehiclePrice.toLocaleString()}</span>
+                    <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                       <span className="text-slate-600 font-medium">Vehicle Price</span>
+                       <span className="font-bold text-slate-900">${vehiclePrice.toLocaleString()}</span>
                     </div>
-                    <div className="flex justify-between items-center p-2">
-                       <span className="text-slate-600">Sales Tax ({salesTaxRate}%)</span>
-                       <span className="font-semibold text-slate-900">+ ${Math.round(calculations.salesTaxAmount).toLocaleString()}</span>
+                    <div className="flex justify-between items-center p-3">
+                       <span className="text-slate-600 font-medium">Sales Tax ({salesTaxRate}%)</span>
+                       <span className="font-bold text-slate-900">+ ${Math.round(calculations.salesTaxAmount).toLocaleString()}</span>
                     </div>
-                    <div className="flex justify-between items-center p-2 bg-slate-50 rounded">
-                       <span className="text-slate-600">Fees</span>
-                       <span className="font-semibold text-slate-900">+ ${fees.toLocaleString()}</span>
+                    <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                       <span className="text-slate-600 font-medium">Fees</span>
+                       <span className="font-bold text-slate-900">+ ${fees.toLocaleString()}</span>
                     </div>
-                    <div className="flex justify-between items-center p-2">
-                       <span className="text-slate-600">Down Payment</span>
-                       <span className="font-semibold text-green-600">- ${downPayment.toLocaleString()}</span>
+                    <div className="flex justify-between items-center p-3">
+                       <span className="text-slate-600 font-medium">Down Payment</span>
+                       <span className="font-bold text-emerald-600">- ${downPayment.toLocaleString()}</span>
                     </div>
-                     <div className="flex justify-between items-center p-2 bg-slate-50 rounded">
-                       <span className="text-slate-600">Trade-in Value</span>
-                       <span className="font-semibold text-green-600">- ${tradeInValue.toLocaleString()}</span>
+                     <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                       <span className="text-slate-600 font-medium">Trade-in Value</span>
+                       <span className="font-bold text-emerald-600">- ${tradeInValue.toLocaleString()}</span>
                     </div>
-                    <div className="border-t border-slate-200 my-2 pt-2 flex justify-between items-center font-bold">
-                       <span className="text-slate-800">Amount Financed</span>
-                       <span className="text-brand-600 text-lg">${Math.round(calculations.loanAmount).toLocaleString()}</span>
+                    <div className="border-t border-slate-200 my-2 pt-3 flex justify-between items-center">
+                       <span className="text-slate-800 font-bold uppercase text-xs tracking-wide">Amount Financed</span>
+                       <span className="text-brand-600 text-lg font-bold">${Math.round(calculations.loanAmount).toLocaleString()}</span>
                     </div>
                  </div>
              </div>
 
-             <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 flex flex-col">
-                <h3 className="text-lg font-semibold text-slate-800 mb-4">Principal vs Interest</h3>
+             <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 flex flex-col">
+                <h3 className="text-lg font-bold text-slate-800 mb-4">Principal vs Interest</h3>
                 <div className="flex-1 w-full min-h-[200px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -333,78 +337,44 @@ export const AutoLoanCalculator: React.FC = () => {
                 </div>
              </div>
           </div>
+          
+          {/* Amortization Schedule Toggle Area (Simplified for dashboard) */}
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+             <button 
+               onClick={() => setShowSchedule(!showSchedule)}
+               className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition"
+             >
+                <span className="font-bold text-slate-800">View Amortization Schedule</span>
+                <span className="text-brand-600 text-sm font-bold">{showSchedule ? 'Hide' : 'Show'}</span>
+             </button>
+             {showSchedule && (
+                <div className="max-h-[400px] overflow-y-auto border-t border-slate-100">
+                   <table className="w-full text-sm text-left">
+                      <thead className="bg-slate-50 sticky top-0 text-xs uppercase font-bold text-slate-500">
+                         <tr>
+                            <th className="px-4 py-2">Date</th>
+                            <th className="px-4 py-2">Payment</th>
+                            <th className="px-4 py-2">Interest</th>
+                            <th className="px-4 py-2 text-right">Balance</th>
+                         </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                         {calculations.schedule.map((row, i) => (
+                            <tr key={i}>
+                               <td className="px-4 py-2 font-medium">{row.date}</td>
+                               <td className="px-4 py-2 text-slate-600">${row.payment.toFixed(2)}</td>
+                               <td className="px-4 py-2 text-amber-600">${row.interest.toFixed(2)}</td>
+                               <td className="px-4 py-2 text-right font-bold text-slate-900">${row.balance.toFixed(2)}</td>
+                            </tr>
+                         ))}
+                      </tbody>
+                   </table>
+                </div>
+             )}
+          </div>
+
         </div>
       </div>
-
-      {/* Amortization Schedule */}
-      <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-           <div>
-             <h3 className="text-lg font-bold text-slate-800">Amortization Schedule</h3>
-             <p className="text-sm text-slate-500">Monthly breakdown of your car loan</p>
-           </div>
-           <button 
-             onClick={() => setShowSchedule(!showSchedule)}
-             className="text-sm font-medium text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-4 py-2 rounded-lg transition"
-           >
-             {showSchedule ? 'Hide Schedule' : 'Show Full Schedule'}
-           </button>
-        </div>
-        
-        <div className={`overflow-x-auto transition-all duration-500 ${showSchedule ? 'max-h-[800px]' : 'max-h-[300px]'}`}>
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0">
-              <tr>
-                <th className="px-6 py-3 font-semibold">Date</th>
-                <th className="px-6 py-3 font-semibold">Payment</th>
-                <th className="px-6 py-3 font-semibold text-brand-600">Principal</th>
-                <th className="px-6 py-3 font-semibold text-amber-600">Interest</th>
-                <th className="px-6 py-3 font-semibold text-right">Balance</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {calculations.schedule.map((row, index) => (
-                <tr key={index} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-3 font-medium text-slate-900">{row.date}</td>
-                  <td className="px-6 py-3 text-slate-600">${row.payment.toFixed(2)}</td>
-                  <td className="px-6 py-3 text-slate-600 font-medium">${row.principal.toFixed(2)}</td>
-                  <td className="px-6 py-3 text-slate-600">${row.interest.toFixed(2)}</td>
-                  <td className="px-6 py-3 text-slate-900 font-bold text-right">${row.balance.toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {!showSchedule && (
-             <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none flex items-end justify-center pb-4">
-                <span className="text-slate-400 text-xs">Expand to see full {calculations.schedule.length} months</span>
-             </div>
-          )}
-        </div>
-      </div>
-
-      {/* SEO Content Section */}
-      <article className="prose prose-slate max-w-none bg-white p-8 rounded-2xl border border-slate-200 shadow-sm mt-12">
-        <h2 className="text-2xl font-bold text-slate-900 mb-4">Understanding Your Car Loan</h2>
-        <p className="text-slate-600 mb-6 leading-relaxed">
-          Financing a vehicle involves more than just looking at the sticker price. Our <strong>Car Loan Calculator</strong> helps you find your actual monthly payment by including sales tax, dealer fees, and the value of your trade-in vehicle.
-        </p>
-        
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div>
-               <h3 className="text-lg font-bold text-slate-800 mb-2">How Interest (APR) Affects Payments</h3>
-               <p className="text-slate-600 text-sm leading-relaxed">
-                 The Annual Percentage Rate (APR) is the interest you pay on the loan. A lower credit score often results in a higher APR, which significantly increases your monthly payment and total cost over the life of the loan.
-               </p>
-            </div>
-            <div>
-               <h3 className="text-lg font-bold text-slate-800 mb-2">Trade-In & Down Payment</h3>
-               <p className="text-slate-600 text-sm leading-relaxed">
-                 Putting money down or trading in an old vehicle reduces the <strong>Principal Loan Amount</strong>. This not only lowers your monthly payment but also reduces the total amount of interest you will pay. In many states, the trade-in value is also deducted from the taxable price of the car, saving you money on sales tax.
-               </p>
-            </div>
-        </div>
-      </article>
-
     </div>
   );
 };

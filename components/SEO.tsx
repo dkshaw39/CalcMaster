@@ -10,7 +10,7 @@ interface SEOProps {
 export const SEO: React.FC<SEOProps> = ({ title, description, keywords }) => {
   useEffect(() => {
     // Update Title
-    document.title = `${title} | CalcMaster Pro`;
+    document.title = `${title} | CalcMaster`;
 
     // Helper to update meta tags
     const setMeta = (name: string, content: string) => {

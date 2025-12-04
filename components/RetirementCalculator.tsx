@@ -12,7 +12,7 @@ interface YearlyData {
   interest: number;
 }
 
-// --- UI Helper Components (Moved outside to prevent re-render focus loss) ---
+// --- UI Helper Components ---
 
 const SectionHeader = ({ icon: Icon, title }: { icon: any, title: string }) => (
   <h3 className="flex items-center gap-2 text-sm font-bold text-slate-800 uppercase tracking-wider mb-6 pb-2 border-b border-slate-100">
@@ -23,24 +23,25 @@ const SectionHeader = ({ icon: Icon, title }: { icon: any, title: string }) => (
 
 const InputField = ({ label, value, onChange, icon: Icon, suffix, min, max, step }: any) => (
   <div className="group">
-    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1.5 ml-1">{label}</label>
-    <div className="relative transition-all duration-200">
+    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5 ml-1">{label}</label>
+    <div className="flex items-center bg-white border border-slate-300 rounded-xl overflow-hidden focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-500/20 transition-all shadow-sm relative">
       {Icon && (
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors pointer-events-none">
+        <div className="pl-3 text-slate-400 shrink-0">
           <Icon size={18} />
         </div>
       )}
       <input 
         type="number" 
-        value={value} 
-        onChange={e => onChange(e.target.value === '' ? 0 : Number(e.target.value))}
+        value={isNaN(value) ? '' : value} 
+        onChange={e => onChange(e.target.value === '' ? 0 : parseFloat(e.target.value))}
         min={min} max={max} step={step}
-        className={`w-full bg-white text-slate-900 font-bold border border-slate-300 focus:border-brand-500 rounded-xl py-3 ${Icon ? 'pl-10' : 'pl-4'} pr-4 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all shadow-sm`}
+        style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+        className={`flex-1 w-full bg-transparent text-black font-bold py-3 ${Icon ? 'pl-2' : 'pl-4'} ${suffix ? 'pr-2' : 'pr-4'} outline-none min-w-0 placeholder-slate-400 relative z-10 !text-black`}
       />
       {suffix && (
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-sm pointer-events-none">
+        <div className="bg-slate-50 border-l border-slate-100 px-3 py-3 text-slate-600 font-bold text-sm whitespace-nowrap shrink-0 h-full flex items-center">
           {suffix}
-        </span>
+        </div>
       )}
     </div>
   </div>
@@ -49,8 +50,8 @@ const InputField = ({ label, value, onChange, icon: Icon, suffix, min, max, step
 const SliderField = ({ label, value, onChange, min, max, suffix = '' }: any) => (
   <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
     <div className="flex justify-between items-center mb-3">
-      <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">{label}</label>
-      <span className="text-brand-700 font-bold bg-slate-50 px-2 py-1 rounded border border-slate-200 text-sm">
+      <label className="text-xs font-bold text-slate-700 uppercase tracking-wide">{label}</label>
+      <span className="text-brand-800 font-bold bg-slate-50 px-2 py-1 rounded border border-slate-200 text-sm">
         {value}{suffix}
       </span>
     </div>

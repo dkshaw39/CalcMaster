@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { Calendar, DollarSign, Percent, Clock } from 'lucide-react';
+import { Calendar, DollarSign, Percent, Clock, PieChart as PieIcon, ArrowRight } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
 import { SEO } from './SEO';
 
@@ -21,7 +21,6 @@ export const LoanCalculator: React.FC = () => {
   const [loanTermMonths, setLoanTermMonths] = useState(0);
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
 
-  // State for visibility
   const [showSchedule, setShowSchedule] = useState(false);
 
   // Calculations
@@ -39,7 +38,6 @@ export const LoanCalculator: React.FC = () => {
       monthlyPayment = principal * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
     }
 
-    // Generate Schedule
     const schedule: AmortizationRow[] = [];
     let currentBalance = principal;
     let totalInterest = 0;
@@ -50,7 +48,6 @@ export const LoanCalculator: React.FC = () => {
       const principalPayment = monthlyPayment - interestPayment;
       currentBalance -= principalPayment;
       
-      // Handle floating point errors at end
       if (currentBalance < 0) currentBalance = 0;
 
       totalInterest += interestPayment;
@@ -72,263 +69,237 @@ export const LoanCalculator: React.FC = () => {
     };
   }, [loanAmount, interestRate, loanTermYears, loanTermMonths, startDate]);
 
-  // Chart Data
-  const pieData = [
-    { name: 'Principal', value: loanAmount },
-    { name: 'Total Interest', value: calculations.totalInterest },
-  ];
-  
-  const COLORS = ['#0284c7', '#f59e0b']; // Brand Blue & Amber
+  // Styles
+  const inputContainerClass = "flex items-center bg-white border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 overflow-hidden transition shadow-sm h-12";
+  const iconClass = "pl-3 pr-2 text-slate-400";
+  const fieldClass = "w-full p-2 h-full outline-none font-bold text-black min-w-0 bg-transparent !text-black";
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
+    <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in">
       <SEO 
         title="Loan Calculator with Amortization Schedule"
         description="Advanced loan calculator for personal loans, business loans, or general debt. View your detailed amortization schedule and monthly payment breakdown."
         keywords="loan calculator, personal loan calculator, debt calculator, amortization schedule, monthly payment, interest calculator"
       />
-      {/* Header Section for SEO */}
-      <header className="text-center space-y-2 mb-6 pt-4">
+      <header className="mb-2 pt-2">
         <h1 className="text-2xl font-bold text-slate-900">Loan <span className="text-brand-600">Calculator</span></h1>
+        <p className="text-sm text-slate-500">Calculate payments and interest for any loan.</p>
       </header>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-12 gap-6 items-start">
         
-        {/* Left Column: Inputs */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 md:p-8 h-fit">
-          <h2 className="text-xl font-semibold mb-6 text-slate-800 flex items-center gap-2">
-            <span className="w-1 h-6 bg-brand-600 rounded-full"></span>
-            Loan Details
-          </h2>
-          
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Loan Amount</label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition">
-                  <DollarSign size={18} />
-                </div>
-                <input 
-                  type="number" 
-                  value={loanAmount} 
-                  onChange={(e) => setLoanAmount(Number(e.target.value))}
-                  className="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium text-slate-900"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Interest Rate (APR)</label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition">
-                  <Percent size={18} />
-                </div>
-                <input 
-                  type="number" 
-                  step="0.1"
-                  value={interestRate} 
-                  onChange={(e) => setInterestRate(Number(e.target.value))}
-                  className="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium text-slate-900"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+        {/* Left Column: Inputs (Sidebar) */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 md:p-6">
+            <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2 border-b border-slate-100 pb-4">
+              <DollarSign size={18} className="text-brand-600"/> Loan Details
+            </h2>
+            
+            <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Term (Years)</label>
-                <div className="relative">
-                   <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Clock size={18}/></div>
-                   <input 
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Loan Amount</label>
+                <div className={inputContainerClass}>
+                  <div className={iconClass}><DollarSign size={18} /></div>
+                  <input 
                     type="number" 
-                    value={loanTermYears} 
-                    onChange={(e) => setLoanTermYears(Number(e.target.value))}
-                    className="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium text-slate-900"
+                    value={loanAmount} 
+                    onChange={(e) => setLoanAmount(Number(e.target.value))}
+                    className={fieldClass}
+                    style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Months</label>
-                <input 
-                  type="number" 
-                  value={loanTermMonths} 
-                  onChange={(e) => setLoanTermMonths(Number(e.target.value))}
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium text-slate-900"
-                />
-              </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Start Date</label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition">
-                  <Calendar size={18} />
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Interest Rate (APR)</label>
+                <div className={inputContainerClass}>
+                  <div className={iconClass}><Percent size={18} /></div>
+                  <input 
+                    type="number" 
+                    step="0.1"
+                    value={interestRate} 
+                    onChange={(e) => setInterestRate(Number(e.target.value))}
+                    className={fieldClass}
+                    style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                  />
                 </div>
-                <input 
-                  type="date" 
-                  value={startDate} 
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition font-medium text-slate-900"
-                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Term (Years)</label>
+                  <div className={inputContainerClass}>
+                     <div className={iconClass}><Clock size={18}/></div>
+                     <input 
+                      type="number" 
+                      value={loanTermYears} 
+                      onChange={(e) => setLoanTermYears(Number(e.target.value))}
+                      className={fieldClass}
+                      style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Months</label>
+                  <div className={inputContainerClass}>
+                    <input 
+                      type="number" 
+                      value={loanTermMonths} 
+                      onChange={(e) => setLoanTermMonths(Number(e.target.value))}
+                      className={`${fieldClass} px-3`}
+                      style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Start Date</label>
+                <div className={inputContainerClass}>
+                  <div className={iconClass}><Calendar size={18} /></div>
+                  <input 
+                    type="date" 
+                    value={startDate} 
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className={fieldClass}
+                    style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Results & Visualization */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* Right Column: Results (Dashboard) */}
+        <div className="lg:col-span-8 space-y-6">
           
           {/* Summary Cards */}
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
              <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition">
-                  <DollarSign size={80} />
+                <div className="relative z-10">
+                  <p className="text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">Monthly Payment</p>
+                  <div className="text-3xl lg:text-4xl font-bold tracking-tight mb-1">
+                    ${calculations.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
                 </div>
-                <div className="text-slate-400 text-xs uppercase tracking-widest font-semibold mb-2">Monthly Payment</div>
-                <div className="text-3xl lg:text-4xl font-bold tracking-tight">
-                  ${calculations.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <div className="absolute right-0 bottom-0 p-4 opacity-10 group-hover:opacity-20 transition">
+                  <DollarSign size={80} />
                 </div>
              </div>
 
              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                <div className="text-slate-500 text-xs uppercase tracking-widest font-semibold mb-2">Total Interest</div>
-                <div className="text-2xl font-bold text-amber-500">
-                  ${calculations.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <div>
+                  <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Total Interest</p>
+                  <div className="text-2xl font-bold text-amber-500">
+                    ${calculations.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
                 </div>
                 <div className="text-xs text-slate-400 mt-2">Cost of borrowing</div>
              </div>
 
              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                <div className="text-slate-500 text-xs uppercase tracking-widest font-semibold mb-2">Total Payoff</div>
-                <div className="text-2xl font-bold text-slate-700">
-                  ${calculations.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <div>
+                  <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Total Payoff</p>
+                  <div className="text-2xl font-bold text-slate-700">
+                    ${calculations.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
                 </div>
                 <div className="text-xs text-slate-400 mt-2">Principal + Interest</div>
              </div>
           </div>
 
           {/* Chart Section */}
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">Payment Breakdown</h3>
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  layout="vertical"
-                  data={[
-                    { name: 'Total', principal: loanAmount, interest: calculations.totalInterest }
-                  ]}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                  <XAxis type="number" />
-                  <YAxis type="category" dataKey="name" hide />
-                  <Tooltip 
-                     cursor={{fill: 'transparent'}}
-                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                  />
-                  <Legend />
-                  <Bar dataKey="principal" name="Principal Amount" stackId="a" fill="#0284c7" radius={[4, 0, 0, 4]} barSize={40} />
-                  <Bar dataKey="interest" name="Total Interest" stackId="a" fill="#f59e0b" radius={[0, 4, 4, 0]} barSize={40} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 md:p-8">
+            <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+               <PieIcon size={18} className="text-brand-600"/> Payment Composition
+            </h3>
             
-            <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-                <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-lg">
-                    <div className="w-3 h-3 rounded-full bg-brand-600"></div>
-                    <span className="text-slate-600">Principal:</span>
-                    <span className="font-bold ml-auto">${loanAmount.toLocaleString()}</span>
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+                <div className="h-64 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      layout="vertical"
+                      data={[
+                        { name: 'Total', principal: loanAmount, interest: calculations.totalInterest }
+                      ]}
+                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                      <XAxis type="number" hide />
+                      <YAxis type="category" dataKey="name" hide />
+                      <Tooltip 
+                         cursor={{fill: 'transparent'}}
+                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                      />
+                      <Legend />
+                      <Bar dataKey="principal" name="Principal" stackId="a" fill="#0284c7" radius={[4, 0, 0, 4]} barSize={60} />
+                      <Bar dataKey="interest" name="Interest" stackId="a" fill="#f59e0b" radius={[0, 4, 4, 0]} barSize={60} />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
-                <div className="flex items-center gap-3 bg-amber-50 p-3 rounded-lg">
-                    <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                    <span className="text-slate-600">Interest:</span>
-                    <span className="font-bold ml-auto">${Math.round(calculations.totalInterest).toLocaleString()}</span>
+                
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold">P</div>
+                        <div>
+                           <div className="text-xs text-slate-500 font-bold uppercase">Principal</div>
+                           <div className="text-lg font-bold text-slate-900">${loanAmount.toLocaleString()}</div>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center font-bold">I</div>
+                        <div>
+                           <div className="text-xs text-slate-500 font-bold uppercase">Interest</div>
+                           <div className="text-lg font-bold text-slate-900">${Math.round(calculations.totalInterest).toLocaleString()}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
           </div>
+
+          {/* Amortization Schedule */}
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+               <h3 className="text-lg font-bold text-slate-800">Amortization Schedule</h3>
+               <button 
+                 onClick={() => setShowSchedule(!showSchedule)}
+                 className="text-sm font-bold text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-4 py-2 rounded-lg transition"
+               >
+                 {showSchedule ? 'Collapse' : 'Expand Table'}
+               </button>
+            </div>
+            
+            <div className={`overflow-x-auto transition-all duration-500 ${showSchedule ? 'max-h-[800px]' : 'max-h-[300px]'}`}>
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+                  <tr>
+                    <th className="px-6 py-3 font-bold">Date</th>
+                    <th className="px-6 py-3 font-bold">Payment</th>
+                    <th className="px-6 py-3 font-bold text-brand-600">Principal</th>
+                    <th className="px-6 py-3 font-bold text-amber-600">Interest</th>
+                    <th className="px-6 py-3 font-bold text-right">Balance</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {calculations.schedule.map((row, index) => (
+                    <tr key={index} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-3 font-medium text-slate-900">{row.date}</td>
+                      <td className="px-6 py-3 text-slate-600">${row.payment.toFixed(2)}</td>
+                      <td className="px-6 py-3 text-slate-600 font-medium">${row.principal.toFixed(2)}</td>
+                      <td className="px-6 py-3 text-slate-600">${row.interest.toFixed(2)}</td>
+                      <td className="px-6 py-3 text-slate-900 font-bold text-right">${row.balance.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {!showSchedule && (
+                 <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+              )}
+            </div>
+          </div>
+
         </div>
       </div>
-
-      {/* Amortization Schedule */}
-      <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-           <div>
-             <h3 className="text-lg font-bold text-slate-800">Amortization Schedule</h3>
-             <p className="text-sm text-slate-500">Monthly breakdown of your loan</p>
-           </div>
-           <button 
-             onClick={() => setShowSchedule(!showSchedule)}
-             className="text-sm font-medium text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-4 py-2 rounded-lg transition"
-           >
-             {showSchedule ? 'Hide Schedule' : 'Show Full Schedule'}
-           </button>
-        </div>
-        
-        <div className={`overflow-x-auto transition-all duration-500 ${showSchedule ? 'max-h-[800px]' : 'max-h-[300px]'}`}>
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0">
-              <tr>
-                <th className="px-6 py-3 font-semibold">Date</th>
-                <th className="px-6 py-3 font-semibold">Payment</th>
-                <th className="px-6 py-3 font-semibold text-brand-600">Principal</th>
-                <th className="px-6 py-3 font-semibold text-amber-600">Interest</th>
-                <th className="px-6 py-3 font-semibold text-right">Balance</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {calculations.schedule.map((row, index) => (
-                <tr key={index} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-3 font-medium text-slate-900">{row.date}</td>
-                  <td className="px-6 py-3 text-slate-600">${row.payment.toFixed(2)}</td>
-                  <td className="px-6 py-3 text-slate-600 font-medium">${row.principal.toFixed(2)}</td>
-                  <td className="px-6 py-3 text-slate-600">${row.interest.toFixed(2)}</td>
-                  <td className="px-6 py-3 text-slate-900 font-bold text-right">${row.balance.toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {!showSchedule && (
-             <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none flex items-end justify-center pb-4">
-                <span className="text-slate-400 text-xs">Expand to see full {calculations.schedule.length} months</span>
-             </div>
-          )}
-        </div>
-      </div>
-
-      {/* SEO Content Section */}
-      <article className="prose prose-slate max-w-none bg-white p-8 rounded-2xl border border-slate-200 shadow-sm mt-12">
-        <h2 className="text-2xl font-bold text-slate-900 mb-4">How to Use the Loan Calculator</h2>
-        <p className="text-slate-600 mb-6 leading-relaxed">
-          This free <strong>Loan Calculator</strong> helps you estimate your monthly loan payments. By entering the loan amount, 
-          interest rate (APR), and loan term, you can instantly see how much you will pay each month and the total cost of the loan over time.
-        </p>
-        
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div>
-               <h3 className="text-lg font-bold text-slate-800 mb-2">What is Amortization?</h3>
-               <p className="text-slate-600 text-sm leading-relaxed">
-                 Amortization is the process of paying off a debt over time through regular payments. 
-                 A portion of each payment goes towards the principal (the actual amount borrowed) and a portion goes towards interest. 
-                 Early in the loan, a higher percentage of your payment goes toward interest.
-               </p>
-            </div>
-            <div>
-               <h3 className="text-lg font-bold text-slate-800 mb-2">Principal vs. Interest</h3>
-               <p className="text-slate-600 text-sm leading-relaxed">
-                 <strong>Principal:</strong> The money you originally agreed to pay back.<br/>
-                 <strong>Interest:</strong> The cost of borrowing the principal.<br/>
-                 Using this calculator, you can visualize the ratio of interest to principal for every single payment in the schedule above.
-               </p>
-            </div>
-        </div>
-
-        <h3 className="text-lg font-bold text-slate-800 mb-2">Common Uses</h3>
-        <ul className="list-disc list-inside text-slate-600 space-y-2 mb-6">
-           <li><strong>Auto Loans:</strong> Calculate monthly car payments based on price and interest rate.</li>
-           <li><strong>Personal Loans:</strong> Estimate payments for debt consolidation or personal expenses.</li>
-           <li><strong>Small Business Loans:</strong> Plan your business finances by understanding your debt obligations.</li>
-        </ul>
-      </article>
-
     </div>
   );
 };

@@ -21,10 +21,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ categories, isOpen, onClose })
 
   return (
     <>
-      {/* Mobile Overlay */}
+      {/* Overlay - Visible on Mobile & Tablet (hidden on Desktop lg) */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-slate-900/50 z-40 md:hidden backdrop-blur-sm transition-opacity"
+          className="fixed top-14 md:top-16 left-0 right-0 bottom-0 bg-slate-900/50 z-40 lg:hidden backdrop-blur-sm transition-opacity"
           onClick={onClose}
         />
       )}
@@ -32,8 +32,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ categories, isOpen, onClose })
       {/* Sidebar Content */}
       <aside 
         className={`
-          fixed top-14 md:top-16 left-0 bottom-0 z-40 w-72 bg-white border-r border-slate-200 overflow-y-auto transform transition-transform duration-300 ease-out shadow-xl md:shadow-none
-          md:translate-x-0 md:static md:h-[calc(100vh-4rem)]
+          fixed top-14 md:top-16 left-0 bottom-0 z-40 w-72 bg-white border-r border-slate-200 overflow-y-auto transform transition-transform duration-300 ease-out shadow-xl lg:shadow-none
+          lg:translate-x-0 lg:static lg:h-[calc(100vh-4rem)]
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from './Button';
 import { Trash2, Plus, BookOpen, GraduationCap } from 'lucide-react';
+import { SEO } from './SEO';
 
 interface Course {
     id: number;
@@ -100,6 +101,11 @@ export const GPACalculator: React.FC = () => {
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-12">
+            <SEO 
+                title="GPA Calculator - Cumulative & Semester"
+                description="Calculate your semester and cumulative GPA easily. Supports 4.0 and 5.0 grading scales. Add multiple semesters and courses."
+                keywords="gpa calculator, grade point average, college gpa, high school gpa, 4.0 scale calculator"
+            />
             <header className="text-center mb-6 pt-4">
                 <h1 className="text-2xl font-bold text-slate-900">GPA <span className="text-brand-600">Calculator</span></h1>
                 <p className="text-sm text-slate-500 mt-1">Calculate semester and cumulative GPA.</p>
@@ -120,7 +126,8 @@ export const GPACalculator: React.FC = () => {
                                             newSem[idx].name = e.target.value;
                                             setSemesters(newSem);
                                         }}
-                                        className="bg-transparent font-bold text-slate-800 focus:outline-none focus:border-b border-brand-500 w-32 md:w-auto"
+                                        className="bg-transparent font-bold text-black focus:outline-none focus:border-b border-brand-500 w-32 md:w-auto"
+                                        style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
                                     />
                                 </div>
                                 <div className="flex items-center gap-4">
@@ -143,13 +150,15 @@ export const GPACalculator: React.FC = () => {
                                         <input 
                                             value={c.name}
                                             onChange={e => updateCourse(sem.id, c.id, 'name', e.target.value)}
-                                            className="p-2 border border-slate-200 rounded-lg text-sm"
+                                            className="p-2 border border-slate-300 rounded-lg text-sm font-medium text-black bg-white"
                                             placeholder="Course Name"
+                                            style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
                                         />
                                         <select 
                                             value={c.grade}
                                             onChange={e => updateCourse(sem.id, c.id, 'grade', e.target.value)}
-                                            className="p-2 border border-slate-200 rounded-lg text-sm font-medium"
+                                            className="p-2 border border-slate-300 rounded-lg text-sm font-bold text-black bg-white cursor-pointer"
+                                            style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
                                         >
                                             {Object.keys(points).map(g => <option key={g} value={g}>{g}</option>)}
                                         </select>
@@ -157,7 +166,8 @@ export const GPACalculator: React.FC = () => {
                                             type="number"
                                             value={c.credits}
                                             onChange={e => updateCourse(sem.id, c.id, 'credits', Number(e.target.value))}
-                                            className="p-2 border border-slate-200 rounded-lg text-sm"
+                                            className="p-2 border border-slate-300 rounded-lg text-sm font-bold text-black bg-white"
+                                            style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
                                         />
                                         <button onClick={() => removeCourse(sem.id, c.id)} className="p-2 text-slate-400 hover:text-red-500">
                                             <Trash2 size={14}/>

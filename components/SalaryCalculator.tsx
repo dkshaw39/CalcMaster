@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { DollarSign, Briefcase, Calendar } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { DollarSign, Briefcase, Calendar, Check } from 'lucide-react';
 import { SEO } from './SEO';
 
 export const SalaryCalculator: React.FC = () => {
@@ -10,19 +10,16 @@ export const SalaryCalculator: React.FC = () => {
   const [filingStatus, setFilingStatus] = useState('single'); // single, married
 
   const results = useMemo(() => {
-    // 1. Normalize to Annual
     let annualGross = grossSalary;
     if (payFrequency === 'month') annualGross = grossSalary * 12;
     if (payFrequency === 'week') annualGross = grossSalary * 52;
     if (payFrequency === 'biweek') annualGross = grossSalary * 26;
-    if (payFrequency === 'hour') annualGross = grossSalary * 40 * 52; // Assume 40h week
+    if (payFrequency === 'hour') annualGross = grossSalary * 40 * 52;
 
-    // 2. Federal Tax (Simplified 2024/2025 Estimations)
     const standardDeduction = filingStatus === 'single' ? 14600 : 29200;
     const taxableIncome = Math.max(0, annualGross - standardDeduction);
     
     let fedTax = 0;
-    // Brackets for Single (Approx 2024)
     const brackets = filingStatus === 'single' 
       ? [
           { limit: 11600, rate: 0.10 },
@@ -33,7 +30,7 @@ export const SalaryCalculator: React.FC = () => {
           { limit: 609350, rate: 0.35 },
           { limit: Infinity, rate: 0.37 }
         ]
-      : [ // Married Joint
+      : [
           { limit: 23200, rate: 0.10 },
           { limit: 94300, rate: 0.12 },
           { limit: 201050, rate: 0.22 },
@@ -54,14 +51,10 @@ export const SalaryCalculator: React.FC = () => {
       previousLimit = bracket.limit;
     }
 
-    // 3. FICA (Social Security 6.2% + Medicare 1.45%)
-    // SS Cap approx 168,600
     const ssCap = 168600;
     const ssTax = Math.min(annualGross, ssCap) * 0.062;
     const medicareTax = annualGross * 0.0145;
     const ficaTax = ssTax + medicareTax;
-
-    // 4. State Tax (Flat estimate 4.5% for demo, as state laws vary wildly)
     const stateTax = annualGross * 0.045; 
 
     const totalTax = fedTax + ficaTax + stateTax;
@@ -82,120 +75,137 @@ export const SalaryCalculator: React.FC = () => {
     { name: 'State Tax', value: results.annual.state, color: '#94a3b8' },
   ];
 
+  // Styles
+  const inputContainerClass = "flex items-center bg-white border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 overflow-hidden transition shadow-sm h-12";
+  const iconClass = "pl-3 pr-2 text-slate-500";
+  const fieldClass = "flex-1 w-full h-full p-2 outline-none font-bold text-black min-w-0 bg-transparent !text-black";
+
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
+    <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in">
        <SEO 
         title="Salary Calculator & Paycheck Estimator"
         description="Calculate your take-home pay (Net Pay) after Federal Tax, FICA, and State Taxes. View a detailed breakdown for annual, monthly, and bi-weekly paychecks."
         keywords="salary calculator, paycheck calculator, net pay calculator, take home pay, federal tax calculator, income tax calculator"
       />
-       <header className="text-center mb-6 pt-4">
+       <header className="mb-2 pt-2">
         <h1 className="text-2xl font-bold text-slate-900">Salary <span className="text-brand-600">Calculator</span></h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Calculate your net pay after taxes.
-        </p>
+        <p className="text-sm text-slate-500">Find your actual take-home pay.</p>
       </header>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-12 gap-6 items-start">
         
-        {/* Input Column */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6">
-            <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+        {/* Input Column (Sidebar) */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 md:p-6">
+            <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2 border-b border-slate-100 pb-4">
               <Briefcase size={20} className="text-brand-600"/> Income Details
             </h2>
             
             <div className="space-y-5">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Gross Income</label>
-                <div className="relative">
-                   <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><DollarSign size={16}/></div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Gross Income</label>
+                <div className={inputContainerClass}>
+                   <div className={iconClass}><DollarSign size={18}/></div>
                    <input 
                     type="number" 
                     value={grossSalary} 
                     onChange={e => setGrossSalary(Number(e.target.value))}
-                    className="w-full pl-9 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none font-bold text-slate-900"
+                    className={fieldClass}
+                    style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Frequency</label>
-                <select 
-                  value={payFrequency} 
-                  onChange={e => setPayFrequency(e.target.value)}
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none font-medium text-slate-700"
-                >
-                  <option value="year">Annually</option>
-                  <option value="month">Monthly</option>
-                  <option value="biweek">Bi-Weekly</option>
-                  <option value="week">Weekly</option>
-                  <option value="hour">Hourly (40h/wk)</option>
-                </select>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Frequency</label>
+                <div className={inputContainerClass}>
+                    <select 
+                        value={payFrequency} 
+                        onChange={e => setPayFrequency(e.target.value)}
+                        className={`${fieldClass} bg-transparent cursor-pointer`}
+                        style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                    >
+                        <option value="year">Annually</option>
+                        <option value="month">Monthly</option>
+                        <option value="biweek">Bi-Weekly</option>
+                        <option value="week">Weekly</option>
+                        <option value="hour">Hourly (40h/wk)</option>
+                    </select>
+                </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Filing Status</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Filing Status</label>
                 <div className="grid grid-cols-2 gap-2">
                    <button 
                      onClick={() => setFilingStatus('single')}
-                     className={`p-2 rounded-lg text-sm font-bold transition ${filingStatus === 'single' ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                     className={`p-3 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 ${filingStatus === 'single' ? 'bg-slate-900 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
                    >
-                     Single
+                     {filingStatus === 'single' && <Check size={14}/>} Single
                    </button>
                    <button 
                      onClick={() => setFilingStatus('married')}
-                     className={`p-2 rounded-lg text-sm font-bold transition ${filingStatus === 'married' ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                     className={`p-3 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 ${filingStatus === 'married' ? 'bg-slate-900 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
                    >
-                     Married
+                     {filingStatus === 'married' && <Check size={14}/>} Married
                    </button>
                 </div>
               </div>
 
-              <div className="p-4 bg-blue-50 rounded-xl border border-blue-100 text-sm text-blue-800">
-                <strong>Note:</strong> Estimates use 2024/2025 Federal Brackets and standard deductions. State tax is estimated at a flat 4.5% avg.
+              <div className="p-4 bg-brand-50 rounded-xl border border-brand-100 text-xs text-brand-800 leading-relaxed">
+                <strong>Tax Note:</strong> Calculations use 2024/2025 Federal Brackets + Standard Deduction. State tax estimated at 4.5%.
               </div>
             </div>
           </div>
         </div>
 
-        {/* Results Column */}
-        <div className="lg:col-span-2 space-y-6">
-           
-           {/* Top Card */}
-           <div className="bg-slate-900 text-white rounded-2xl p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                 <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Estimated Net Pay (Annual)</div>
-                 <div className="text-4xl md:text-5xl font-bold tracking-tight">
+        {/* Results Column (Dashboard) */}
+        <div className="lg:col-span-8 space-y-6">
+           <div className="bg-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+              <div className="relative z-10 flex-1">
+                 <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">Estimated Annual Net Pay</div>
+                 <div className="text-5xl lg:text-6xl font-bold tracking-tight mb-2">
                     ${Math.round(results.annual.net).toLocaleString()}
                  </div>
-                 <div className="text-sm text-slate-400 mt-2">
-                    Effectively {((results.annual.net / results.annual.gross) * 100).toFixed(1)}% of your gross income
+                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-sm font-medium text-brand-200">
+                    <div className="w-2 h-2 rounded-full bg-brand-400"></div>
+                    {((results.annual.net / results.annual.gross) * 100).toFixed(1)}% of Gross Income
                  </div>
               </div>
               
-              {/* Pie Chart Mini */}
-              <div className="w-32 h-32 hidden md:block">
+              <div className="w-48 h-48 relative z-10 shrink-0">
                  <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
-                       <Pie data={pieData} dataKey="value" innerRadius={25} outerRadius={40} paddingAngle={2}>
+                       <Pie 
+                         data={pieData} 
+                         dataKey="value" 
+                         innerRadius={40} 
+                         outerRadius={70} 
+                         paddingAngle={3}
+                         stroke="none"
+                       >
                           {pieData.map((entry, index) => <Cell key={index} fill={entry.color} />)}
                        </Pie>
+                       <Tooltip formatter={(value: number) => `$${Math.round(value).toLocaleString()}`} />
                     </PieChart>
                  </ResponsiveContainer>
               </div>
+              
+              {/* BG Decor */}
+              <div className="absolute right-0 bottom-0 p-8 opacity-5">
+                 <DollarSign size={200} />
+              </div>
            </div>
 
-           {/* Breakdown Table */}
-           <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-             <div className="p-4 bg-slate-50 border-b border-slate-200">
+           <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+             <div className="p-6 bg-slate-50 border-b border-slate-200">
                <h3 className="font-bold text-slate-800 flex items-center gap-2">
                  <Calendar size={18} className="text-brand-600"/> Paycheck Breakdown
                </h3>
              </div>
              <div className="overflow-x-auto">
                <table className="w-full text-sm text-left">
-                 <thead className="bg-white text-xs uppercase text-slate-500 border-b border-slate-100">
+                 <thead className="bg-white text-xs uppercase font-bold text-slate-500 border-b border-slate-100">
                    <tr>
                       <th className="px-6 py-4">Frequency</th>
                       <th className="px-6 py-4">Gross Pay</th>
@@ -227,35 +237,6 @@ export const SalaryCalculator: React.FC = () => {
                </table>
              </div>
            </div>
-
-           {/* Tax Details */}
-           <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6">
-              <h3 className="font-bold text-slate-800 mb-4">Where does the money go?</h3>
-              <div className="space-y-3">
-                 <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                    <div className="flex items-center gap-3">
-                       <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                       <span className="text-slate-700 font-medium">Federal Tax</span>
-                    </div>
-                    <span className="font-bold text-slate-900">${Math.round(results.annual.fed).toLocaleString()}</span>
-                 </div>
-                 <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                    <div className="flex items-center gap-3">
-                       <div className="w-3 h-3 rounded-full bg-slate-500"></div>
-                       <span className="text-slate-700 font-medium">FICA (SS & Medicare)</span>
-                    </div>
-                    <span className="font-bold text-slate-900">${Math.round(results.annual.fica).toLocaleString()}</span>
-                 </div>
-                 <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                    <div className="flex items-center gap-3">
-                       <div className="w-3 h-3 rounded-full bg-slate-300"></div>
-                       <span className="text-slate-700 font-medium">State Tax (Est.)</span>
-                    </div>
-                    <span className="font-bold text-slate-900">${Math.round(results.annual.state).toLocaleString()}</span>
-                 </div>
-              </div>
-           </div>
-
         </div>
       </div>
     </div>

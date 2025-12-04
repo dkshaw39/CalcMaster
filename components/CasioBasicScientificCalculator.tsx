@@ -37,7 +37,7 @@ const MainBtn = ({ label, onClick, variant = 'num', subLabel }: any) => {
   if (variant === 'ac') bg = "bg-[#c75c5c] text-white border-white/20"; 
   
   return (
-    <div className="flex flex-col items-center relative pt-3">
+    <div className="flex flex-col items-center relative pt-3 w-full">
       {subLabel && <div className="absolute top-0 text-[#d9a64e] text-[8px] font-bold whitespace-nowrap">{subLabel}</div>}
       <button 
         onClick={onClick}
@@ -103,7 +103,8 @@ export const CasioBasicScientificCalculator: React.FC = () => {
         setResult('Error');
       } else {
         const formatted = parseFloat(res.toPrecision(10));
-        setResult(String(formatted));
+        const resStr = String(formatted);
+        setResult(resStr);
       }
     } catch (e) {
       setResult('Syntax Error');
@@ -111,153 +112,153 @@ export const CasioBasicScientificCalculator: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-4 animate-fade-in pb-4">
+    <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in pb-12 flex flex-col items-center">
       <SEO 
         title="Casio fx-82MS Simulator - Basic Scientific Calculator"
         description="Free online Casio fx-82MS / fx-991MS simulator. Classic S-V.P.A.M. scientific calculator for students and engineers."
         keywords="casio fx-82ms online, fx-991ms simulator, scientific calculator, s-v.p.a.m. calculator, student calculator"
       />
-      <header className="text-center pt-2 mb-2">
-        <h1 className="text-xl font-bold text-slate-900">Casio <span className="text-brand-600">fx-991MS</span></h1>
+      <header className="mb-2 pt-2 text-center">
+        <h1 className="text-2xl font-bold text-slate-900">Casio <span className="text-brand-600">fx-991MS</span></h1>
+        <p className="text-sm text-slate-500 mt-1">Classic scientific calculator simulator.</p>
       </header>
 
-      <div className="flex justify-center">
-         
-         {/* Calculator Body - Reduced Width */}
-         <div className="w-[300px] bg-[#22262b] rounded-t-[16px] rounded-b-[32px] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.1)] border-b-8 border-[#15171a] relative p-4 pb-8 select-none">
-            
-            {/* Branding Area */}
-            <div className="flex justify-between items-start mb-3 px-1">
-               <div className="flex-1">
-                  <div className="text-white font-bold text-lg leading-none">CASIO</div>
-                  <div className="text-white/90 text-[10px] font-serif italic font-bold mt-1 mb-0.5">fx-991MS</div>
-                  <div className="text-[#d9a64e] text-[9px] font-black tracking-widest italic">S-V.P.A.M.</div>
-               </div>
-               <div className="text-right flex flex-col items-end">
-                  <div className="w-16 h-6 bg-[#3a3633] rounded overflow-hidden relative shadow-inner border border-[#666] mb-0.5">
-                      <div className="absolute inset-0 grid grid-cols-4 divide-x divide-white/20 opacity-50"><div></div><div></div><div></div><div></div></div>
-                  </div>
-                  <div className="text-white/50 text-[7px] font-bold tracking-wider uppercase">Two Way Power</div>
-               </div>
-            </div>
-
-            {/* Screen Area */}
-            <div className="bg-[#1a1c20] p-3 rounded-t-[8px] rounded-b-[16px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] mb-4 border-b border-white/5 mx-0.5">
-               <div className="bg-[#c2dcb3] h-[60px] shadow-[inset_0_2px_6px_rgba(0,0,0,0.3)] border border-[#777] rounded-[3px] p-2 flex flex-col justify-between font-mono relative overflow-hidden">
-                  <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-black"></div>
-                  
-                  {/* Indicators Overlay (Absolute Top Right) */}
-                  <div className="absolute top-0 right-1 flex text-[8px] text-black font-bold gap-1 z-20">
-                     <span className={shift ? 'opacity-100' : 'opacity-10'}>S</span>
-                     <span className={alpha ? 'opacity-100' : 'opacity-10'}>A</span>
-                     <span className="opacity-100">{isDegree ? 'D' : 'R'}</span>
-                  </div>
-
-                  {/* Expression Line */}
-                  <div className="text-xs font-semibold text-black leading-tight min-h-[1.5em] relative z-10 font-mono pl-0.5 pr-8 mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
-                     {expression}<span className="animate-pulse opacity-50">_</span>
-                  </div>
-
-                  {/* Result Line */}
-                  <div className="text-right text-2xl font-bold text-black tracking-tighter leading-none relative z-10 font-mono pr-0.5 pb-0.5 truncate">
-                     {result}
-                  </div>
-               </div>
-            </div>
-
-            {/* Top Control Deck */}
-            <div className="relative h-[80px] mb-1 px-0.5">
-                {/* Replay Button - Smaller */}
-                <div className="absolute left-1/2 top-[35%] -translate-x-1/2 -translate-y-1/2 w-24 h-16 z-10">
-                    <div className="w-full h-full bg-[#9da2aa] rounded-[50%] shadow-[0_3px_6px_rgba(0,0,0,0.3),inset_0_1px_2px_rgba(255,255,255,0.4)] border-b border-black/40 flex items-center justify-center relative cursor-pointer active:scale-[0.98] transition-transform">
-                        <div className="text-[8px] font-bold text-[#d9a64e] tracking-[0.1em] mb-3">COPY</div>
-                        <div className="absolute text-[7px] font-bold text-[#555] tracking-widest mt-1">REPLAY</div>
-                        {/* Arrows */}
-                        <div className="absolute top-1 left-1/2 -translate-x-1/2 text-slate-600 text-[9px]">▲</div>
-                        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 text-slate-600 text-[9px]">▼</div>
-                        <div className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-600 text-[9px]">◀</div>
-                        <div className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-600 text-[9px]">▶</div>
+      <div className="flex justify-center px-2 py-4 md:py-8 w-full">
+           {/* Calculator Body - Responsive Width */}
+           <div className="w-full max-w-[350px] bg-[#22262b] rounded-t-[16px] rounded-b-[32px] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.1)] border-b-8 border-[#15171a] relative p-4 pb-8 select-none">
+              
+              {/* Branding Area */}
+              <div className="flex justify-between items-start mb-3 px-1">
+                 <div className="flex-1">
+                    <div className="text-white font-bold text-lg leading-none">CASIO</div>
+                    <div className="text-white/90 text-[10px] font-serif italic font-bold mt-1 mb-0.5">fx-991MS</div>
+                    <div className="text-[#d9a64e] text-[9px] font-black tracking-widest italic">S-V.P.A.M.</div>
+                 </div>
+                 <div className="text-right flex flex-col items-end">
+                    <div className="w-16 h-6 bg-[#3a3633] rounded overflow-hidden relative shadow-inner border border-[#666] mb-0.5">
+                        <div className="absolute inset-0 grid grid-cols-4 divide-x divide-white/20 opacity-50"><div></div><div></div><div></div><div></div></div>
                     </div>
-                </div>
+                    <div className="text-white/50 text-[7px] font-bold tracking-wider uppercase">Two Way Power</div>
+                 </div>
+              </div>
 
-                {/* Left Buttons */}
-                <div className="absolute left-0 top-0 flex gap-3 pl-1">
-                   <TopOvalBtn label="SHIFT" labelColor="text-[#d9a64e]" onClick={() => setShift(!shift)} />
-                   <TopOvalBtn label="ALPHA" labelColor="text-[#c9454a]" onClick={() => setAlpha(!alpha)} />
-                </div>
+              {/* Screen Area */}
+              <div className="bg-[#1a1c20] p-3 rounded-t-[8px] rounded-b-[16px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] mb-4 border-b border-white/5 mx-0.5">
+                 <div className="bg-[#c2dcb3] h-[60px] shadow-[inset_0_2px_6px_rgba(0,0,0,0.3)] border border-[#777] rounded-[3px] p-2 flex flex-col justify-between font-mono relative overflow-hidden">
+                    <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-black"></div>
+                    
+                    {/* Indicators Overlay */}
+                    <div className="absolute top-0 right-1 flex text-[8px] text-black font-bold gap-1 z-20">
+                       <span className={shift ? 'opacity-100' : 'opacity-10'}>S</span>
+                       <span className={alpha ? 'opacity-100' : 'opacity-10'}>A</span>
+                       <span className="opacity-100">{isDegree ? 'D' : 'R'}</span>
+                    </div>
 
-                {/* Right Buttons */}
-                <div className="absolute right-0 top-0 flex gap-3 pr-1">
-                   <TopOvalBtn label="MODE CLR" labelColor="text-white/70" />
-                   <TopOvalBtn label="ON" labelColor="text-white/70" onClick={clearAll} />
-                </div>
-            </div>
+                    {/* Expression Line */}
+                    <div className="text-xs font-semibold text-black leading-tight min-h-[1.5em] relative z-10 font-mono pl-0.5 pr-8 mt-1 whitespace-nowrap overflow-x-auto scrollbar-hide">
+                       {expression}<span className="animate-pulse opacity-50">_</span>
+                    </div>
 
-            {/* Special Function Row under Replay */}
-            <div className="flex justify-between px-1 mb-3">
-                <div className="flex gap-1.5">
-                    <FunctionBtn label="CALC" shiftLabel="SOLVE" />
-                    <FunctionBtn label="∫dx" shiftLabel="d/dx" />
-                </div>
-                {/* Gap for Replay */}
-                <div className="w-6"></div>
-                <div className="flex gap-1.5">
-                    <FunctionBtn label="x⁻¹" shiftLabel="x!" />
-                    <FunctionBtn label="CONST" shiftLabel="CONV" />
-                </div>
-            </div>
+                    {/* Result Line */}
+                    <div className="text-right text-2xl font-bold text-black tracking-tighter leading-none relative z-10 font-mono pr-0.5 pb-0.5 whitespace-nowrap overflow-x-auto scrollbar-hide">
+                       {result}
+                    </div>
+                 </div>
+              </div>
 
-            {/* Scientific Grid */}
-            <div className="grid grid-cols-6 gap-x-1.5 gap-y-1 mb-4 px-0.5">
-                <FunctionBtn label="ab/c" shiftLabel="d/c" />
-                <FunctionBtn label="√" shiftLabel="³√" onClick={() => insert('√(')} />
-                <FunctionBtn label="x²" shiftLabel="x³" onClick={() => insert('^2')} />
-                <FunctionBtn label="^" shiftLabel="x√" onClick={() => insert('^')} />
-                <FunctionBtn label="log" shiftLabel="10ˣ" onClick={() => insert(shift ? '10^' : 'log(')} />
-                <FunctionBtn label="ln" shiftLabel="eˣ" onClick={() => insert(shift ? 'e^' : 'ln(')} />
-                
-                <FunctionBtn label="(-)" shiftLabel="A" />
-                <FunctionBtn label="°'″" shiftLabel="B" />
-                <FunctionBtn label="hyp" shiftLabel="C" />
-                <FunctionBtn label="sin" shiftLabel="sin⁻¹" alphaLabel="D" onClick={() => insert('sin(')} />
-                <FunctionBtn label="cos" shiftLabel="cos⁻¹" alphaLabel="E" onClick={() => insert('cos(')} />
-                <FunctionBtn label="tan" shiftLabel="tan⁻¹" alphaLabel="F" onClick={() => insert('tan(')} />
-                
-                <FunctionBtn label="RCL" shiftLabel="STO" />
-                <FunctionBtn label="ENG" shiftLabel="←" />
-                <FunctionBtn label="(" shiftLabel="%" onClick={() => insert('(')} />
-                <FunctionBtn label=")" shiftLabel="," alphaLabel="X" onClick={() => insert(')')} />
-                <FunctionBtn label="," shiftLabel=";" alphaLabel="Y" />
-                <FunctionBtn label="M+" shiftLabel="M-" alphaLabel="M" />
-            </div>
+              {/* Top Control Deck */}
+              <div className="relative h-[80px] mb-1 px-0.5">
+                  {/* Replay Button - Smaller */}
+                  <div className="absolute left-1/2 top-[35%] -translate-x-1/2 -translate-y-1/2 w-24 h-16 z-10">
+                      <div className="w-full h-full bg-[#9da2aa] rounded-[50%] shadow-[0_3px_6px_rgba(0,0,0,0.3),inset_0_1px_2px_rgba(255,255,255,0.4)] border-b border-black/40 flex items-center justify-center relative cursor-pointer active:scale-[0.98] transition-transform">
+                          <div className="text-[8px] font-bold text-[#d9a64e] tracking-[0.1em] mb-3">COPY</div>
+                          <div className="absolute text-[7px] font-bold text-[#555] tracking-widest mt-1">REPLAY</div>
+                          {/* Arrows */}
+                          <div className="absolute top-1 left-1/2 -translate-x-1/2 text-slate-600 text-[9px]">▲</div>
+                          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 text-slate-600 text-[9px]">▼</div>
+                          <div className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-600 text-[9px]">◀</div>
+                          <div className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-600 text-[9px]">▶</div>
+                      </div>
+                  </div>
 
-            {/* Main Keypad */}
-            <div className="grid grid-cols-5 gap-x-2 gap-y-2 px-0.5 mt-2">
-               <MainBtn label="7" onClick={() => insert('7')} />
-               <MainBtn label="8" onClick={() => insert('8')} />
-               <MainBtn label="9" onClick={() => insert('9')} />
-               <MainBtn label="DEL" variant="del" subLabel="INS" onClick={deleteChar} />
-               <MainBtn label="AC" variant="ac" subLabel="OFF" onClick={clearAll} />
+                  {/* Left Buttons */}
+                  <div className="absolute left-0 top-0 flex gap-3 pl-1">
+                     <TopOvalBtn label="SHIFT" labelColor="text-[#d9a64e]" onClick={() => setShift(!shift)} />
+                     <TopOvalBtn label="ALPHA" labelColor="text-[#c9454a]" onClick={() => setAlpha(!alpha)} />
+                  </div>
 
-               <MainBtn label="4" onClick={() => insert('4')} />
-               <MainBtn label="5" onClick={() => insert('5')} />
-               <MainBtn label="6" onClick={() => insert('6')} />
-               <MainBtn label="×" variant="op" subLabel="nPr" onClick={() => insert('×')} />
-               <MainBtn label="÷" variant="op" subLabel="nCr" onClick={() => insert('÷')} />
+                  {/* Right Buttons */}
+                  <div className="absolute right-0 top-0 flex gap-3 pr-1">
+                     <TopOvalBtn label="MODE CLR" labelColor="text-white/70" />
+                     <TopOvalBtn label="ON" labelColor="text-white/70" onClick={clearAll} />
+                  </div>
+              </div>
 
-               <MainBtn label="1" onClick={() => insert('1')} />
-               <MainBtn label="2" onClick={() => insert('2')} />
-               <MainBtn label="3" onClick={() => insert('3')} />
-               <MainBtn label="+" variant="op" subLabel="Pol" onClick={() => insert('+')} />
-               <MainBtn label="-" variant="op" subLabel="Rec" onClick={() => insert('-')} />
+              {/* Special Function Row under Replay */}
+              <div className="flex justify-between px-1 mb-3">
+                  <div className="flex gap-1.5">
+                      <FunctionBtn label="CALC" shiftLabel="SOLVE" />
+                      <FunctionBtn label="∫dx" shiftLabel="d/dx" />
+                  </div>
+                  {/* Gap for Replay */}
+                  <div className="w-6"></div>
+                  <div className="flex gap-1.5">
+                      <FunctionBtn label="x⁻¹" shiftLabel="x!" />
+                      <FunctionBtn label="CONST" shiftLabel="CONV" />
+                  </div>
+              </div>
 
-               <MainBtn label="0" onClick={() => insert('0')} />
-               <MainBtn label="." subLabel="Rnd" onClick={() => insert('.')} />
-               <MainBtn label="EXP" subLabel="π" onClick={() => insert(shift ? 'π' : 'e+')} />
-               <MainBtn label="Ans" subLabel="DRG" />
-               <MainBtn label="=" onClick={calculate} subLabel="%" />
-            </div>
-         </div>
+              {/* Scientific Grid */}
+              <div className="grid grid-cols-6 gap-x-1.5 gap-y-1 mb-4 px-0.5">
+                  <FunctionBtn label="ab/c" shiftLabel="d/c" />
+                  <FunctionBtn label="√" shiftLabel="³√" onClick={() => insert('√(')} />
+                  <FunctionBtn label="x²" shiftLabel="x³" onClick={() => insert('^2')} />
+                  <FunctionBtn label="^" shiftLabel="x√" onClick={() => insert('^')} />
+                  <FunctionBtn label="log" shiftLabel="10ˣ" onClick={() => insert(shift ? '10^' : 'log(')} />
+                  <FunctionBtn label="ln" shiftLabel="eˣ" onClick={() => insert(shift ? 'e^' : 'ln(')} />
+                  
+                  <FunctionBtn label="(-)" shiftLabel="A" />
+                  <FunctionBtn label="°'″" shiftLabel="B" />
+                  <FunctionBtn label="hyp" shiftLabel="C" />
+                  <FunctionBtn label="sin" shiftLabel="sin⁻¹" alphaLabel="D" onClick={() => insert('sin(')} />
+                  <FunctionBtn label="cos" shiftLabel="cos⁻¹" alphaLabel="E" onClick={() => insert('cos(')} />
+                  <FunctionBtn label="tan" shiftLabel="tan⁻¹" alphaLabel="F" onClick={() => insert('tan(')} />
+                  
+                  <FunctionBtn label="RCL" shiftLabel="STO" />
+                  <FunctionBtn label="ENG" shiftLabel="←" />
+                  <FunctionBtn label="(" shiftLabel="%" onClick={() => insert('(')} />
+                  <FunctionBtn label=")" shiftLabel="," alphaLabel="X" onClick={() => insert(')')} />
+                  <FunctionBtn label="," shiftLabel=";" alphaLabel="Y" />
+                  <FunctionBtn label="M+" shiftLabel="M-" alphaLabel="M" />
+              </div>
+
+              {/* Main Keypad */}
+              <div className="grid grid-cols-5 gap-x-2 gap-y-2 px-0.5 mt-2">
+                 <MainBtn label="7" onClick={() => insert('7')} />
+                 <MainBtn label="8" onClick={() => insert('8')} />
+                 <MainBtn label="9" onClick={() => insert('9')} />
+                 <MainBtn label="DEL" variant="del" subLabel="INS" onClick={deleteChar} />
+                 <MainBtn label="AC" variant="ac" subLabel="OFF" onClick={clearAll} />
+
+                 <MainBtn label="4" onClick={() => insert('4')} />
+                 <MainBtn label="5" onClick={() => insert('5')} />
+                 <MainBtn label="6" onClick={() => insert('6')} />
+                 <MainBtn label="×" variant="op" subLabel="nPr" onClick={() => insert('×')} />
+                 <MainBtn label="÷" variant="op" subLabel="nCr" onClick={() => insert('÷')} />
+
+                 <MainBtn label="1" onClick={() => insert('1')} />
+                 <MainBtn label="2" onClick={() => insert('2')} />
+                 <MainBtn label="3" onClick={() => insert('3')} />
+                 <MainBtn label="+" variant="op" subLabel="Pol" onClick={() => insert('+')} />
+                 <MainBtn label="-" variant="op" subLabel="Rec" onClick={() => insert('-')} />
+
+                 <MainBtn label="0" onClick={() => insert('0')} />
+                 <MainBtn label="." subLabel="Rnd" onClick={() => insert('.')} />
+                 <MainBtn label="EXP" subLabel="π" onClick={() => insert(shift ? 'π' : 'e+')} />
+                 <MainBtn label="Ans" subLabel="DRG" />
+                 <MainBtn label="=" onClick={calculate} subLabel="%" />
+              </div>
+           </div>
       </div>
     </div>
   );

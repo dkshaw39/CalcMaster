@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { Divide, Equal } from 'lucide-react';
+import { Divide, Equal, Plus } from 'lucide-react';
+import { SEO } from './SEO';
 
 export const FractionCalculator: React.FC = () => {
   // Fraction A
@@ -28,20 +29,10 @@ export const FractionCalculator: React.FC = () => {
      let resDen = denA * denB;
 
      switch(op) {
-        case '+':
-           resNum = (nA * denB) + (nB * denA);
-           break;
-        case '-':
-           resNum = (nA * denB) - (nB * denA);
-           break;
-        case '*':
-           resNum = nA * nB;
-           resDen = denA * denB;
-           break;
-        case '/':
-           resNum = nA * denB;
-           resDen = denA * nB;
-           break;
+        case '+': resNum = (nA * denB) + (nB * denA); break;
+        case '-': resNum = (nA * denB) - (nB * denA); break;
+        case '*': resNum = nA * nB; resDen = denA * denB; break;
+        case '/': resNum = nA * denB; resDen = denA * nB; break;
      }
 
      // Reduce
@@ -66,84 +57,120 @@ export const FractionCalculator: React.FC = () => {
 
   const result = calculate();
 
-  const FractionInput = ({ w, sw, n, sn, d, sd }: any) => (
-     <div className="flex items-center gap-2">
-        <input 
-           type="number" 
-           value={w} 
-           onChange={e => sw(Number(e.target.value))} 
-           placeholder="0"
-           className="w-16 p-3 text-center bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-800 placeholder:text-slate-300"
-        />
-        <div className="flex flex-col gap-2">
-           <input 
-              type="number" 
-              value={n} 
-              onChange={e => sn(Number(e.target.value))} 
-              className="w-16 p-2 text-center bg-white border border-slate-200 rounded-lg font-bold text-slate-800"
-           />
-           <div className="h-0.5 bg-slate-300 w-full rounded-full"></div>
-           <input 
-              type="number" 
-              value={d} 
-              onChange={e => sd(Number(e.target.value))} 
-              className="w-16 p-2 text-center bg-white border border-slate-200 rounded-lg font-bold text-slate-800"
-           />
+  const FractionInput = ({ label, w, sw, n, sn, d, sd }: any) => (
+     <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <label className="block text-xs font-bold text-slate-400 uppercase mb-3 text-center">{label}</label>
+        <div className="flex items-center gap-2 justify-center">
+            <input 
+               type="number" 
+               value={w} 
+               onChange={e => sw(Number(e.target.value))} 
+               placeholder="0"
+               className="w-14 h-14 text-center bg-white border border-slate-300 rounded-lg font-bold text-slate-900 text-xl focus:ring-2 focus:ring-brand-500 outline-none"
+               style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+            />
+            <div className="flex flex-col gap-2">
+               <input 
+                  type="number" 
+                  value={n} 
+                  onChange={e => sn(Number(e.target.value))} 
+                  className="w-14 p-1 text-center bg-white border border-slate-300 rounded-lg font-bold text-slate-900 focus:ring-2 focus:ring-brand-500 outline-none"
+                  style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+               />
+               <div className="h-0.5 bg-slate-400 w-full rounded-full"></div>
+               <input 
+                  type="number" 
+                  value={d} 
+                  onChange={e => sd(Number(e.target.value))} 
+                  className="w-14 p-1 text-center bg-white border border-slate-300 rounded-lg font-bold text-slate-900 focus:ring-2 focus:ring-brand-500 outline-none"
+                  style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+               />
+            </div>
         </div>
      </div>
   );
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-12">
-      <header className="text-center mb-6 pt-4">
+    <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in pb-12">
+      <SEO 
+        title="Fraction Calculator - Add, Subtract, Multiply, Divide"
+        description="Solve fraction problems with step-by-step mixed number support. Simplify fractions and convert to decimals."
+        keywords="fraction calculator, mixed number calculator, simplify fractions, fraction math, fraction to decimal"
+      />
+      <header className="mb-2 pt-2">
         <h1 className="text-2xl font-bold text-slate-900">Fraction <span className="text-brand-600">Calculator</span></h1>
         <p className="text-sm text-slate-500 mt-1">Arithmetic with mixed fractions.</p>
       </header>
 
-      <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8 md:p-12">
-         <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-12">
-            <FractionInput w={wholeA} sw={setWholeA} n={numA} sn={setNumA} d={denA} sd={setDenA} />
-            
-            <div className="flex gap-2">
-               {['+', '-', '*', '/'].map(o => (
-                  <button 
-                     key={o} 
-                     onClick={() => setOp(o)}
-                     className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl font-bold transition ${op === o ? 'bg-brand-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
-                  >
-                     {o === '*' ? '×' : o === '/' ? '÷' : o}
-                  </button>
-               ))}
-            </div>
+      <div className="grid lg:grid-cols-12 gap-6 items-start">
+         
+         {/* Left: Inputs */}
+         <div className="lg:col-span-6 space-y-6">
+             <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
+                 <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2 border-b border-slate-100 pb-4">
+                    <Divide size={18} className="text-brand-600"/> Equation
+                 </h2>
+                 
+                 <div className="flex flex-col gap-6 items-center">
+                     <div className="flex items-center gap-4 w-full justify-center">
+                        <FractionInput label="1st Fraction" w={wholeA} sw={setWholeA} n={numA} sn={setNumA} d={denA} sd={setDenA} />
+                     </div>
 
-            <FractionInput w={wholeB} sw={setWholeB} n={numB} sn={setNumB} d={denB} sd={setDenB} />
-            
-            <div className="text-slate-300">
-               <Equal size={32}/>
-            </div>
+                     <div className="flex gap-2 bg-slate-100 p-1.5 rounded-xl">
+                        {['+', '-', '*', '/'].map(o => (
+                           <button 
+                              key={o} 
+                              onClick={() => setOp(o)}
+                              className={`w-12 h-12 rounded-lg flex items-center justify-center text-xl font-bold transition ${op === o ? 'bg-brand-600 text-white shadow-lg' : 'bg-white text-slate-500 hover:text-slate-800'}`}
+                           >
+                              {o === '*' ? '×' : o === '/' ? '÷' : o}
+                           </button>
+                        ))}
+                     </div>
 
-            <div className="bg-slate-900 text-white p-6 rounded-xl min-w-[150px] text-center shadow-lg">
-                <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Result</div>
-                
-                {/* Improper */}
-                <div className="text-2xl font-bold mb-1">
-                   {result.num}
-                   <span className="opacity-50 mx-1">/</span>
-                   {result.den}
-                </div>
-                
-                {/* Mixed */}
-                {result.mixedWhole > 0 && result.mixedNum > 0 && (
-                   <div className="text-brand-400 font-mono text-lg font-bold border-t border-slate-700 pt-2 mt-2">
-                      {result.mixedWhole} <span className="text-sm">{result.mixedNum}/{result.den}</span>
-                   </div>
-                )}
-                
-                {/* Decimal */}
-                <div className="text-slate-400 text-sm mt-2">
-                   {result.decimal.toFixed(4)}
-                </div>
-            </div>
+                     <div className="flex items-center gap-4 w-full justify-center">
+                        <FractionInput label="2nd Fraction" w={wholeB} sw={setWholeB} n={numB} sn={setNumB} d={denB} sd={setDenB} />
+                     </div>
+                 </div>
+             </div>
+         </div>
+
+         {/* Right: Results */}
+         <div className="lg:col-span-6 space-y-6">
+             <div className="bg-slate-900 text-white rounded-2xl p-10 shadow-xl flex flex-col items-center justify-center h-full min-h-[300px]">
+                 <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-6">Result</div>
+                 
+                 <div className="flex items-center gap-8">
+                     {/* Mixed Result */}
+                     {result.mixedWhole > 0 && result.mixedNum > 0 && (
+                        <div className="text-center">
+                           <div className="text-sm text-slate-500 mb-2 font-bold uppercase">Mixed</div>
+                           <div className="flex items-center gap-2 text-5xl font-bold">
+                              <span>{result.mixedWhole}</span>
+                              <div className="flex flex-col gap-1 text-2xl text-brand-400">
+                                 <span className="border-b border-brand-400/30">{result.mixedNum}</span>
+                                 <span>{result.den}</span>
+                              </div>
+                           </div>
+                        </div>
+                     )}
+
+                     {result.mixedWhole > 0 && result.mixedNum > 0 && <div className="h-16 w-px bg-white/10"></div>}
+
+                     {/* Improper Result */}
+                     <div className="text-center">
+                        <div className="text-sm text-slate-500 mb-2 font-bold uppercase">Fraction</div>
+                        <div className="flex flex-col gap-1 text-4xl font-bold text-white">
+                           <span className="border-b border-white/20 pb-1">{result.num}</span>
+                           <span>{result.den}</span>
+                        </div>
+                     </div>
+                 </div>
+
+                 <div className="mt-8 bg-white/10 px-6 py-2 rounded-full font-mono text-lg text-brand-200">
+                    = {result.decimal.toFixed(4)}
+                 </div>
+             </div>
          </div>
       </div>
     </div>

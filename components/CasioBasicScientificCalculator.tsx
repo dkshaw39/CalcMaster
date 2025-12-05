@@ -114,9 +114,9 @@ export const CasioBasicScientificCalculator: React.FC = () => {
   return (
     <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in pb-12 flex flex-col items-center">
       <SEO 
-        title="Casio fx-82MS Simulator - Basic Scientific Calculator"
-        description="Free online Casio fx-82MS / fx-991MS simulator. Classic S-V.P.A.M. scientific calculator for students and engineers."
-        keywords="casio fx-82ms online, fx-991ms simulator, scientific calculator, s-v.p.a.m. calculator, student calculator"
+        title="Casio fx-82MS Simulator - Online Scientific Calculator"
+        description="Free online simulator for Casio fx-82MS and fx-991MS scientific calculators. Classic S-V.P.A.M. design for school math, trigonometry, and fractions."
+        keywords="casio calculator, casio fx-82ms simulator, fx-991ms online, scientific calculator online, s-v.p.a.m. calculator, high school math calculator, fraction calculator"
       />
       <header className="mb-2 pt-2 text-center">
         <h1 className="text-2xl font-bold text-slate-900">Casio <span className="text-brand-600">fx-991MS</span></h1>
@@ -260,6 +260,40 @@ export const CasioBasicScientificCalculator: React.FC = () => {
               </div>
            </div>
       </div>
+
+      {/* SEO Article */}
+      <article className="prose prose-slate max-w-4xl w-full mx-auto px-6 py-12 bg-white rounded-3xl border border-slate-200 shadow-sm mt-8">
+        <h2 className="text-3xl font-bold text-slate-900 mb-6">Casio fx-82MS / fx-991MS Online Simulator</h2>
+        <p className="text-lg text-slate-600 mb-6 leading-relaxed">
+          The <strong>Casio fx-82MS</strong> is one of the most widely used scientific calculators in high schools and universities. 
+          Our online simulator faithfully recreates the S-V.P.A.M. (Super Visually Perfect Algebraic Method) experience, allowing students to perform complex calculations directly in the browser.
+        </p>
+
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
+           <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+              <h3 className="text-xl font-bold text-slate-800 mb-3">Classic Design</h3>
+              <p className="text-slate-600 text-sm">
+                 Featuring the familiar 2-line display, where the top line shows the calculation formula and the bottom line shows the result. 
+                 This "MS" (Mathematical Standard) series layout is beloved for its reliability and ease of use.
+              </p>
+           </div>
+           <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+              <h3 className="text-xl font-bold text-slate-800 mb-3">Essential Functions</h3>
+              <ul className="text-slate-600 text-sm space-y-2 list-disc list-inside">
+                 <li>Fraction Calculations (using the a b/c key)</li>
+                 <li>Permutation and Combination (nPr, nCr)</li>
+                 <li>Statistical Calculations (Standard Deviation)</li>
+                 <li>Multi-statement Calculation</li>
+              </ul>
+           </div>
+        </div>
+
+        <h3 className="text-2xl font-bold text-slate-800 mb-4">Perfect for Students</h3>
+        <p className="text-slate-600 mb-8">
+           Whether you are studying algebra, trigonometry, or physics, this simulator allows you to practice with the exact button layout you'll find in the classroom.
+           It's an excellent backup for when you leave your physical calculator at school.
+        </p>
+      </article>
     </div>
   );
 };

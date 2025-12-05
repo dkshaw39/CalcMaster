@@ -132,7 +132,7 @@ export const AutoLoanCalculator: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Down Payment</label>
                   <div className={inputContainerClass}>
@@ -191,7 +191,7 @@ export const AutoLoanCalculator: React.FC = () => {
 
               <div className="pt-4 border-t border-slate-100">
                   <h3 className="text-sm font-bold text-slate-800 mb-4">Loan Terms</h3>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Interest (APR)</label>
                       <div className={inputContainerClass}>
@@ -248,9 +248,9 @@ export const AutoLoanCalculator: React.FC = () => {
         <div className="lg:col-span-8 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
              <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group">
-                <div className="relative z-10">
+                <div className="relative z-10 min-w-0">
                   <p className="text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">Monthly Payment</p>
-                  <div className="text-3xl lg:text-4xl font-bold tracking-tight mb-1">
+                  <div className="text-3xl lg:text-4xl font-bold tracking-tight mb-1 break-words">
                     ${calculations.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </div>
                   <p className="text-xs text-brand-400 font-medium">{loanTermMonths} month term</p>
@@ -261,9 +261,9 @@ export const AutoLoanCalculator: React.FC = () => {
              </div>
 
              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                <div>
+                <div className="min-w-0">
                   <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Total Interest</p>
-                  <div className="text-2xl font-bold text-amber-500">
+                  <div className="text-2xl font-bold text-amber-500 break-words">
                     ${calculations.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </div>
                 </div>
@@ -271,9 +271,9 @@ export const AutoLoanCalculator: React.FC = () => {
              </div>
 
              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                <div>
+                <div className="min-w-0">
                   <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Amount Financed</p>
-                  <div className="text-2xl font-bold text-slate-800">
+                  <div className="text-2xl font-bold text-slate-800 break-words">
                     ${calculations.loanAmount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </div>
                 </div>

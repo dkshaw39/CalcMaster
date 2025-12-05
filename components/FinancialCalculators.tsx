@@ -1,3 +1,1 @@
-// Functionality moved to:
-// - SalaryCalculator.tsx
-// - SalesTaxCalculator.tsx
+// File deprecated. Functionality moved to dedicated calculator files.

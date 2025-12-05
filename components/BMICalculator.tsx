@@ -75,9 +75,9 @@ export const BMICalculator: React.FC = () => {
   return (
     <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in pb-12">
       <SEO 
-        title="BMI Calculator - Body Mass Index"
-        description="Calculate your Body Mass Index (BMI) and find your ideal weight range. Determine if you are underweight, normal weight, or overweight."
-        keywords="bmi calculator, body mass index, ideal weight calculator, healthy weight range, bmi chart"
+        title="BMI Calculator for Men & Women - Metric & Imperial"
+        description="Calculate your Body Mass Index (BMI) instantly. Supports Metric (kg/cm) and Imperial (lbs/ft). See your ideal weight range and health category."
+        keywords="bmi calculator, body mass index, bmi calculator for women, bmi calculator for men, ideal weight calculator, kg to lbs bmi"
       />
       <header className="mb-2 pt-2">
         <h1 className="text-2xl font-bold text-slate-900">BMI <span className="text-brand-600">Calculator</span></h1>
@@ -144,7 +144,7 @@ export const BMICalculator: React.FC = () => {
                             <div>
                                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Height</label>
                                 <div className="flex gap-2">
-                                    <div className={`${inputContainerClass} flex-1`}>
+                                    <div className={`${inputContainerClass} flex-1 min-w-0`}>
                                         <input 
                                             type="number" 
                                             placeholder="ft" 
@@ -155,7 +155,7 @@ export const BMICalculator: React.FC = () => {
                                         />
                                         <div className="pr-3 text-slate-400 font-bold text-sm">ft</div>
                                     </div>
-                                    <div className={`${inputContainerClass} flex-1`}>
+                                    <div className={`${inputContainerClass} flex-1 min-w-0`}>
                                         <input 
                                             type="number" 
                                             placeholder="in" 
@@ -216,7 +216,7 @@ export const BMICalculator: React.FC = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <div className="flex items-center gap-2 mb-3 text-brand-600 text-xs font-bold uppercase">
                         <Activity size={16}/> Healthy Weight Range

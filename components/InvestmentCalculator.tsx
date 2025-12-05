@@ -169,7 +169,7 @@ export const InvestmentCalculator: React.FC = () => {
                       value={startingAmount} 
                       onChange={setStartingAmount} 
                     />
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                        <InputGroup 
                          label="Duration" 
                          value={years} 
@@ -241,11 +241,11 @@ export const InvestmentCalculator: React.FC = () => {
            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* Card 1: Total Value */}
               <div className="bg-slate-900 text-white p-5 md:p-6 rounded-2xl shadow-lg relative overflow-hidden group">
-                 <div className="relative z-10">
+                 <div className="relative z-10 min-w-0">
                     <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
                        End Balance <ArrowUpRight size={14}/>
                     </div>
-                    <div className="text-3xl lg:text-3xl xl:text-4xl font-bold tracking-tight mb-2">
+                    <div className="text-3xl lg:text-3xl xl:text-4xl font-bold tracking-tight mb-2 break-words">
                        ${results.endBalance.toLocaleString()}
                     </div>
                     <div className="flex items-center gap-2 text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded w-fit">
@@ -260,9 +260,9 @@ export const InvestmentCalculator: React.FC = () => {
 
               {/* Card 2: Interest */}
               <div className="bg-white border border-slate-200 p-5 md:p-6 rounded-2xl shadow-sm flex flex-col justify-between">
-                 <div>
+                 <div className="min-w-0">
                     <div className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Total Interest</div>
-                    <div className="text-2xl lg:text-2xl xl:text-3xl font-bold text-brand-600">
+                    <div className="text-2xl lg:text-2xl xl:text-3xl font-bold text-brand-600 break-words">
                        ${results.totalInterest.toLocaleString()}
                     </div>
                  </div>
@@ -276,9 +276,9 @@ export const InvestmentCalculator: React.FC = () => {
 
               {/* Card 3: Principal */}
               <div className="bg-white border border-slate-200 p-5 md:p-6 rounded-2xl shadow-sm flex flex-col justify-between">
-                 <div>
+                 <div className="min-w-0">
                     <div className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Total Principal</div>
-                    <div className="text-2xl lg:text-2xl xl:text-3xl font-bold text-slate-800">
+                    <div className="text-2xl lg:text-2xl xl:text-3xl font-bold text-slate-800 break-words">
                        ${results.totalPrincipal.toLocaleString()}
                     </div>
                  </div>

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { differenceInYears, differenceInMonths, differenceInDays, addYears, addMonths, addDays, format, differenceInBusinessDays } from 'date-fns';
-import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { SEO } from './SEO';
 
 export const DateCalculator: React.FC = () => {
@@ -114,14 +114,14 @@ export const DateCalculator: React.FC = () => {
                                  <button onClick={() => setOperator('sub')} className={`flex-1 py-3 rounded-lg font-bold border transition ${operator === 'sub' ? 'bg-brand-50 border-brand-500 text-brand-700' : 'border-slate-200 text-slate-600'}`}>Subtract</button>
                               </div>
                            </div>
-                           <div className="flex gap-4">
-                              <div className="flex-1">
+                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div>
                                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Amount</label>
                                  <div className={inputContainerClass}>
                                     <input type="number" value={amount} onChange={e => setAmount(Number(e.target.value))} className={fieldClass} style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}/>
                                  </div>
                               </div>
-                              <div className="w-32">
+                              <div>
                                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Unit</label>
                                  <div className={inputContainerClass}>
                                     <select value={unit} onChange={e => setUnit(e.target.value)} className={`${fieldClass} cursor-pointer bg-transparent`} style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}>
@@ -145,24 +145,21 @@ export const DateCalculator: React.FC = () => {
                     <div className="bg-slate-900 text-white rounded-2xl p-8 shadow-xl flex flex-col justify-center h-[200px] relative overflow-hidden">
                        <div className="relative z-10">
                           <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">Total Duration</div>
-                          <div className="text-5xl font-bold tracking-tight mb-2">
+                          <div className="text-5xl font-bold tracking-tight mb-2 break-words">
                              {diff.years}y {diff.months}m {diff.days}d
                           </div>
                           <div className="text-brand-400 font-bold">{diff.totalDays.toLocaleString()} total days</div>
-                       </div>
-                       <div className="absolute right-0 bottom-0 p-6 opacity-5">
-                          <Calendar size={150}/>
                        </div>
                     </div>
                     <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
                        <h3 className="font-bold text-slate-800 mb-4">Breakdown</h3>
                        <div className="grid grid-cols-2 gap-4">
                           <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-center">
-                             <div className="text-3xl font-bold text-slate-900 mb-1">{diff.totalDays.toLocaleString()}</div>
+                             <div className="text-3xl font-bold text-slate-900 mb-1 break-all">{diff.totalDays.toLocaleString()}</div>
                              <div className="text-xs text-slate-500 font-bold uppercase">Days</div>
                           </div>
                           <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-center">
-                             <div className="text-3xl font-bold text-slate-900 mb-1">{diff.businessDays.toLocaleString()}</div>
+                             <div className="text-3xl font-bold text-slate-900 mb-1 break-all">{diff.businessDays.toLocaleString()}</div>
                              <div className="text-xs text-slate-500 font-bold uppercase">Business Days</div>
                           </div>
                        </div>
@@ -171,7 +168,7 @@ export const DateCalculator: React.FC = () => {
              ) : (
                  <div className="bg-slate-900 text-white rounded-2xl p-10 shadow-xl flex flex-col justify-center items-center h-[300px] relative">
                     <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Resulting Date</div>
-                    <div className="text-6xl font-bold tracking-tight mb-2 text-center">
+                    <div className="text-5xl md:text-6xl font-bold tracking-tight mb-2 text-center break-words">
                        {format(addedDate, 'MMM do')}
                     </div>
                     <div className="text-2xl text-brand-400 font-medium">

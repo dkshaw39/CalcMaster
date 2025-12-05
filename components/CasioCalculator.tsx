@@ -135,9 +135,9 @@ export const CasioCalculator: React.FC = () => {
   return (
     <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in pb-12 flex flex-col items-center">
       <SEO 
-        title="Casio Desk Calculator Online"
-        description="Simple online desk calculator with tax functions, memory, and percentage calculations. Perfect for office and accounting use."
-        keywords="desk calculator, simple calculator, online calculator, tax calculator, office calculator, accounting calculator"
+        title="Online Desk Calculator - Casio Style"
+        description="A simple, robust online desk calculator inspired by the Casio MS-80 series. Features large buttons, memory functions, and clear display for office and home use."
+        keywords="casio calculator, desk calculator, simple online calculator, office calculator, casio ms-80 simulator, business calculator, tax calculator, basic calculator"
       />
       <header className="mb-2 pt-2 text-center">
         <h1 className="text-2xl font-bold text-slate-900">Casio <span className="text-brand-600">Basic</span></h1>
@@ -218,6 +218,34 @@ export const CasioCalculator: React.FC = () => {
             </div>
           </div>
       </div>
+
+      {/* SEO Article */}
+      <article className="prose prose-slate max-w-4xl w-full mx-auto px-6 py-12 bg-white rounded-3xl border border-slate-200 shadow-sm mt-8">
+        <h2 className="text-3xl font-bold text-slate-900 mb-6">Online Desk Calculator</h2>
+        <p className="text-lg text-slate-600 mb-6 leading-relaxed">
+          This <strong>Online Basic Calculator</strong> is designed for speed and simplicity. 
+          Modeled after the classic Casio MS-80 series found in offices around the world, it provides a reliable interface for everyday arithmetic, accounting, and business calculations.
+        </p>
+
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
+           <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+              <h3 className="text-xl font-bold text-slate-800 mb-3">Key Functions</h3>
+              <ul className="text-slate-600 text-sm space-y-2 list-disc list-inside">
+                 <li><strong>Memory Keys (M+, M-, MR, MC):</strong> Store intermediate results for complex multi-step calculations.</li>
+                 <li><strong>Percentage (%):</strong> Quickly calculate markups, discounts, and tax.</li>
+                 <li><strong>Square Root (√):</strong> Essential for basic geometry and statistical estimation.</li>
+              </ul>
+           </div>
+           <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+              <h3 className="text-xl font-bold text-slate-800 mb-3">Best For</h3>
+              <ul className="text-slate-600 text-sm space-y-2 list-disc list-inside">
+                 <li>Balancing checkbooks and personal finance.</li>
+                 <li>Retail calculations (profit margin, sales tax).</li>
+                 <li>Office work and simple accounting tasks.</li>
+              </ul>
+           </div>
+        </div>
+      </article>
     </div>
   );
 };

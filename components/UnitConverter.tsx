@@ -121,7 +121,7 @@ export const UnitConverter: React.FC = () => {
                    <div className="bg-slate-900 text-white rounded-2xl p-10 shadow-xl flex flex-col justify-center items-center h-[300px] relative overflow-hidden">
                        <div className="relative z-10 text-center">
                           <div className="text-brand-400 text-xs font-bold uppercase tracking-widest mb-4">Converted Result</div>
-                          <div className="text-6xl md:text-8xl font-extrabold tracking-tighter mb-4 leading-none">
+                          <div className="text-6xl md:text-8xl font-extrabold tracking-tighter mb-4 leading-none break-all">
                              {Number.isInteger(result) ? result : result.toFixed(4).replace(/\.?0+$/, '')}
                           </div>
                           <div className="inline-block bg-white/10 px-6 py-2 rounded-full text-lg font-bold text-slate-200">

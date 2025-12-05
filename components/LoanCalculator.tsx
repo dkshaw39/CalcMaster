@@ -72,10 +72,11 @@ export const LoanCalculator: React.FC = () => {
   // Styles
   const inputContainerClass = "flex items-center bg-white border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 overflow-hidden transition shadow-sm h-12";
   const iconClass = "pl-3 pr-2 text-slate-400";
+  const suffixClass = "pr-3 pl-2 text-slate-500 font-bold select-none bg-slate-50 h-full flex items-center border-l border-slate-100";
   const fieldClass = "w-full p-2 h-full outline-none font-bold text-black min-w-0 bg-transparent !text-black";
 
   return (
-    <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in">
+    <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in w-full overflow-hidden">
       <SEO 
         title="Loan Calculator with Amortization Schedule"
         description="Advanced loan calculator for personal loans, business loans, or general debt. View your detailed amortization schedule and monthly payment breakdown."
@@ -89,7 +90,7 @@ export const LoanCalculator: React.FC = () => {
       <div className="grid lg:grid-cols-12 gap-6 items-start">
         
         {/* Left Column: Inputs (Sidebar) */}
-        <div className="lg:col-span-4 space-y-6">
+        <div className="lg:col-span-4 space-y-6 min-w-0">
           <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 md:p-6">
             <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2 border-b border-slate-100 pb-4">
               <DollarSign size={18} className="text-brand-600"/> Loan Details
@@ -113,19 +114,20 @@ export const LoanCalculator: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Interest Rate (APR)</label>
                 <div className={inputContainerClass}>
-                  <div className={iconClass}><Percent size={18} /></div>
                   <input 
                     type="number" 
                     step="0.1"
                     value={interestRate} 
                     onChange={(e) => setInterestRate(Number(e.target.value))}
-                    className={fieldClass}
+                    className={`${fieldClass} pl-3`}
                     style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
                   />
+                  <div className={suffixClass}>%</div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* Stack inputs on mobile for better touch targets and no overflow */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Term (Years)</label>
                   <div className={inputContainerClass}>
@@ -171,14 +173,14 @@ export const LoanCalculator: React.FC = () => {
         </div>
 
         {/* Right Column: Results (Dashboard) */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className="lg:col-span-8 space-y-6 min-w-0">
           
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-             <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group">
-                <div className="relative z-10">
+             <div className="bg-slate-900 text-white p-5 md:p-6 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group">
+                <div className="relative z-10 min-w-0">
                   <p className="text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">Monthly Payment</p>
-                  <div className="text-3xl lg:text-4xl font-bold tracking-tight mb-1">
+                  <div className="text-3xl md:text-4xl font-bold tracking-tight mb-1 break-all">
                     ${calculations.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
@@ -187,20 +189,20 @@ export const LoanCalculator: React.FC = () => {
                 </div>
              </div>
 
-             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                <div>
+             <div className="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                <div className="min-w-0">
                   <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Total Interest</p>
-                  <div className="text-2xl font-bold text-amber-500">
+                  <div className="text-2xl font-bold text-amber-500 break-all">
                     ${calculations.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
                 <div className="text-xs text-slate-400 mt-2">Cost of borrowing</div>
              </div>
 
-             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                <div>
+             <div className="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                <div className="min-w-0">
                   <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Total Payoff</p>
-                  <div className="text-2xl font-bold text-slate-700">
+                  <div className="text-2xl font-bold text-slate-700 break-all">
                     ${calculations.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
@@ -209,7 +211,7 @@ export const LoanCalculator: React.FC = () => {
           </div>
 
           {/* Chart Section */}
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 md:p-8">
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 md:p-8">
             <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
                <PieIcon size={18} className="text-brand-600"/> Payment Composition
             </h3>
@@ -241,16 +243,16 @@ export const LoanCalculator: React.FC = () => {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
                         <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold">P</div>
-                        <div>
+                        <div className="min-w-0 flex-1">
                            <div className="text-xs text-slate-500 font-bold uppercase">Principal</div>
-                           <div className="text-lg font-bold text-slate-900">${loanAmount.toLocaleString()}</div>
+                           <div className="text-lg font-bold text-slate-900 break-all">${loanAmount.toLocaleString()}</div>
                         </div>
                     </div>
                     <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
                         <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center font-bold">I</div>
-                        <div>
+                        <div className="min-w-0 flex-1">
                            <div className="text-xs text-slate-500 font-bold uppercase">Interest</div>
-                           <div className="text-lg font-bold text-slate-900">${Math.round(calculations.totalInterest).toLocaleString()}</div>
+                           <div className="text-lg font-bold text-slate-900 break-all">${Math.round(calculations.totalInterest).toLocaleString()}</div>
                         </div>
                     </div>
                 </div>
@@ -258,36 +260,36 @@ export const LoanCalculator: React.FC = () => {
           </div>
 
           {/* Amortization Schedule */}
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden w-full max-w-full">
+            <div className="p-4 md:p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50 gap-4">
                <h3 className="text-lg font-bold text-slate-800">Amortization Schedule</h3>
                <button 
                  onClick={() => setShowSchedule(!showSchedule)}
-                 className="text-sm font-bold text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-4 py-2 rounded-lg transition"
+                 className="w-full sm:w-auto text-sm font-bold text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-4 py-2 rounded-lg transition border border-brand-200 bg-white"
                >
-                 {showSchedule ? 'Collapse' : 'Expand Table'}
+                 {showSchedule ? 'Collapse Table' : 'Show Full Schedule'}
                </button>
             </div>
             
-            <div className={`overflow-x-auto transition-all duration-500 ${showSchedule ? 'max-h-[800px]' : 'max-h-[300px]'}`}>
+            <div className={`overflow-x-auto w-full transition-all duration-500 ${showSchedule ? 'max-h-[800px]' : 'max-h-[300px]'}`}>
               <table className="w-full text-sm text-left">
                 <thead className="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
                   <tr>
-                    <th className="px-6 py-3 font-bold">Date</th>
-                    <th className="px-6 py-3 font-bold">Payment</th>
-                    <th className="px-6 py-3 font-bold text-brand-600">Principal</th>
-                    <th className="px-6 py-3 font-bold text-amber-600">Interest</th>
-                    <th className="px-6 py-3 font-bold text-right">Balance</th>
+                    <th className="px-3 md:px-6 py-3 font-bold whitespace-nowrap">Date</th>
+                    <th className="px-3 md:px-6 py-3 font-bold whitespace-nowrap">Payment</th>
+                    <th className="px-3 md:px-6 py-3 font-bold text-brand-600 whitespace-nowrap">Principal</th>
+                    <th className="px-3 md:px-6 py-3 font-bold text-amber-600 whitespace-nowrap">Interest</th>
+                    <th className="px-3 md:px-6 py-3 font-bold text-right whitespace-nowrap">Balance</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {calculations.schedule.map((row, index) => (
                     <tr key={index} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-3 font-medium text-slate-900">{row.date}</td>
-                      <td className="px-6 py-3 text-slate-600">${row.payment.toFixed(2)}</td>
-                      <td className="px-6 py-3 text-slate-600 font-medium">${row.principal.toFixed(2)}</td>
-                      <td className="px-6 py-3 text-slate-600">${row.interest.toFixed(2)}</td>
-                      <td className="px-6 py-3 text-slate-900 font-bold text-right">${row.balance.toFixed(2)}</td>
+                      <td className="px-3 md:px-6 py-3 font-medium text-slate-900 whitespace-nowrap">{row.date}</td>
+                      <td className="px-3 md:px-6 py-3 text-slate-600 whitespace-nowrap">${row.payment.toFixed(2)}</td>
+                      <td className="px-3 md:px-6 py-3 text-slate-600 font-medium whitespace-nowrap">${row.principal.toFixed(2)}</td>
+                      <td className="px-3 md:px-6 py-3 text-slate-600 whitespace-nowrap">${row.interest.toFixed(2)}</td>
+                      <td className="px-3 md:px-6 py-3 text-slate-900 font-bold text-right whitespace-nowrap">${row.balance.toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

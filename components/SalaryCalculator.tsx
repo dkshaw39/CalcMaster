@@ -164,7 +164,7 @@ export const SalaryCalculator: React.FC = () => {
            <div className="bg-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
               <div className="relative z-10 flex-1">
                  <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">Estimated Annual Net Pay</div>
-                 <div className="text-5xl lg:text-6xl font-bold tracking-tight mb-2">
+                 <div className="text-5xl lg:text-6xl font-bold tracking-tight mb-2 break-all">
                     ${Math.round(results.annual.net).toLocaleString()}
                  </div>
                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-sm font-medium text-brand-200">

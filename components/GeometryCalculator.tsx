@@ -133,13 +133,13 @@ export const GeometryCalculator: React.FC = () => {
                      {formulaVol ? (
                         <div>
                            <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Volume</div>
-                           <div className="text-6xl font-bold tracking-tight">{volume.toFixed(2)}</div>
+                           <div className="text-6xl font-bold tracking-tight break-all">{volume.toFixed(2)}</div>
                            <div className="text-sm font-mono text-brand-400 mt-1">{formulaVol}</div>
                         </div>
                      ) : (
                         <div>
                            <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Area</div>
-                           <div className="text-6xl font-bold tracking-tight">{area.toFixed(2)}</div>
+                           <div className="text-6xl font-bold tracking-tight break-all">{area.toFixed(2)}</div>
                            <div className="text-sm font-mono text-brand-400 mt-1">{formulaArea}</div>
                         </div>
                      )}
@@ -148,14 +148,14 @@ export const GeometryCalculator: React.FC = () => {
                         shape !== 'cone' && (
                            <div className="border-t border-white/10 pt-6">
                               <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Surface Area</div>
-                              <div className="text-3xl font-semibold text-slate-200">{area.toFixed(2)}</div>
+                              <div className="text-3xl font-semibold text-slate-200 break-all">{area.toFixed(2)}</div>
                            </div>
                         )
                      ) : (
                         shape !== 'triangle' && (
                            <div className="border-t border-white/10 pt-6">
                               <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Perimeter / Circumference</div>
-                              <div className="text-3xl font-semibold text-slate-200">{perimeter.toFixed(2)}</div>
+                              <div className="text-3xl font-semibold text-slate-200 break-all">{perimeter.toFixed(2)}</div>
                            </div>
                         )
                      )}

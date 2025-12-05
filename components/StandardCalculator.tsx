@@ -147,7 +147,7 @@ export const StandardCalculator: React.FC = () => {
 
   const Btn = ({ label, onClick, variant = 'num', className = '' }: any) => {
     // Compact heights for better viewport fit: h-9 on mobile, h-12 on desktop
-    const base = "relative h-9 md:h-12 text-sm md:text-base rounded-lg font-medium transition-all active:scale-[0.98] select-none flex items-center justify-center";
+    const base = "relative h-9 md:h-12 text-sm md:text-base rounded-lg font-medium transition-all active:scale-[0.98] select-none flex items-center justify-center touch-manipulation";
     
     // Variants
     const styles: any = {
@@ -202,10 +202,10 @@ export const StandardCalculator: React.FC = () => {
         {/* Mobile Toggle */}
         <button 
           onClick={() => setShowSciMobile(!showSciMobile)}
-          className="md:hidden w-full flex items-center justify-center gap-2 py-1.5 bg-white border border-slate-200 rounded-lg mb-2 text-slate-500 font-medium shadow-sm text-[10px] uppercase tracking-wide hover:bg-slate-50"
+          className="md:hidden w-full flex items-center justify-center gap-2 py-2 bg-white border border-slate-200 rounded-lg mb-2 text-slate-600 font-bold shadow-sm text-xs uppercase tracking-wide hover:bg-slate-50 active:bg-slate-100 transition-colors"
         >
-          {showSciMobile ? <ChevronUp size={12}/> : <ChevronDown size={12}/>}
-          {showSciMobile ? 'Hide Scientific' : 'Show Scientific'}
+          {showSciMobile ? <ChevronUp size={14}/> : <ChevronDown size={14}/>}
+          {showSciMobile ? 'Hide Scientific Keys' : 'Show Scientific Keys'}
         </button>
 
         <div className="flex flex-col md:flex-row gap-2">

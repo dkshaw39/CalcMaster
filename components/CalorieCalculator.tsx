@@ -88,7 +88,7 @@ export const CalorieCalculator: React.FC = () => {
                      </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                      <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Height (cm)</label>
                         <div className={inputContainerClass}>
@@ -168,7 +168,7 @@ export const CalorieCalculator: React.FC = () => {
 
                  {/* Macros Grid */}
                  <h3 className="font-bold text-slate-800 flex items-center gap-2">Macro Nutrient Splits</h3>
-                 <div className="grid md:grid-cols-3 gap-4">
+                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
                         { name: 'Balanced', type: 'balanced', color: 'bg-blue-500' },
                         { name: 'Low Carb', type: 'lowcarb', color: 'bg-emerald-500' },

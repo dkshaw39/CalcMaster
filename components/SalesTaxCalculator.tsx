@@ -96,7 +96,7 @@ export const SalesTaxCalculator: React.FC = () => {
                         <div className="pr-3 pl-2 text-slate-500 font-bold select-none bg-slate-50 h-full flex items-center border-l border-slate-100">%</div>
                     </div>
                     
-                    <div className="flex gap-2 mt-2">
+                    <div className="flex gap-2 mt-2 flex-wrap">
                        {[5, 7.25, 8.875, 10].map(r => (
                           <button 
                             key={r}

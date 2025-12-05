@@ -1,41 +1,45 @@
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
-import { StandardCalculator } from './components/StandardCalculator';
-import { CasioCalculator } from './components/CasioCalculator';
-import { CasioScientificCalculator } from './components/CasioScientificCalculator';
-import { CasioBasicScientificCalculator } from './components/CasioBasicScientificCalculator';
-import { CalculatorList } from './components/CalculatorList';
-import { Sidebar } from './components/Sidebar';
-import { MortgageCalculator } from './components/MortgageCalculator';
-import { BMICalculator } from './components/BMICalculator';
-import { CalorieCalculator } from './components/CalorieCalculator';
-import { LoanCalculator } from './components/LoanCalculator';
-import { AutoLoanCalculator } from './components/AutoLoanCalculator';
-import { DateCalculator } from './components/DateCalculator';
-import { RetirementCalculator } from './components/RetirementCalculator';
-import { InvestmentCalculator } from './components/InvestmentCalculator';
-import { SalaryCalculator } from './components/SalaryCalculator';
-import { SalesTaxCalculator } from './components/SalesTaxCalculator';
-import { PercentageCalculator } from './components/PercentageCalculator';
-import { RandomNumberGenerator } from './components/RandomNumberGenerator';
-import { FractionCalculator } from './components/FractionCalculator';
-import { GeometryCalculator } from './components/GeometryCalculator';
-import { UnitConverter } from './components/UnitConverter';
-import { GPACalculator } from './components/GPACalculator';
-import { PasswordGenerator } from './components/PasswordGenerator';
-import { PregnancyCalculator } from './components/PregnancyCalculator';
-import { BodyFatCalculator } from './components/BodyFatCalculator';
-import { BMRCalculator } from './components/BMRCalculator';
-import { InflationCalculator } from './components/InflationCalculator';
-import { PaceCalculator } from './components/PaceCalculator';
-import { ConcreteCalculator } from './components/ConcreteCalculator';
-import { SubnetCalculator } from './components/SubnetCalculator';
 import { CalculatorCategory } from './types';
 import { SEO } from './components/SEO';
 import { 
-  Calculator, DollarSign, Activity, Menu, Grid, X, MoreVertical, LayoutGrid
+  Calculator, DollarSign, Activity, Menu, Grid, X, MoreVertical, Loader2
 } from 'lucide-react';
+
+// --- Lazy Load Calculators for Performance ---
+const StandardCalculator = React.lazy(() => import('./components/StandardCalculator').then(module => ({ default: module.StandardCalculator })));
+const CasioCalculator = React.lazy(() => import('./components/CasioCalculator').then(module => ({ default: module.CasioCalculator })));
+const CasioScientificCalculator = React.lazy(() => import('./components/CasioScientificCalculator').then(module => ({ default: module.CasioScientificCalculator })));
+const CasioBasicScientificCalculator = React.lazy(() => import('./components/CasioBasicScientificCalculator').then(module => ({ default: module.CasioBasicScientificCalculator })));
+const MortgageCalculator = React.lazy(() => import('./components/MortgageCalculator').then(module => ({ default: module.MortgageCalculator })));
+const BMICalculator = React.lazy(() => import('./components/BMICalculator').then(module => ({ default: module.BMICalculator })));
+const CalorieCalculator = React.lazy(() => import('./components/CalorieCalculator').then(module => ({ default: module.CalorieCalculator })));
+const LoanCalculator = React.lazy(() => import('./components/LoanCalculator').then(module => ({ default: module.LoanCalculator })));
+const AutoLoanCalculator = React.lazy(() => import('./components/AutoLoanCalculator').then(module => ({ default: module.AutoLoanCalculator })));
+const DateCalculator = React.lazy(() => import('./components/DateCalculator').then(module => ({ default: module.DateCalculator })));
+const RetirementCalculator = React.lazy(() => import('./components/RetirementCalculator').then(module => ({ default: module.RetirementCalculator })));
+const InvestmentCalculator = React.lazy(() => import('./components/InvestmentCalculator').then(module => ({ default: module.InvestmentCalculator })));
+const SalaryCalculator = React.lazy(() => import('./components/SalaryCalculator').then(module => ({ default: module.SalaryCalculator })));
+const SalesTaxCalculator = React.lazy(() => import('./components/SalesTaxCalculator').then(module => ({ default: module.SalesTaxCalculator })));
+const PercentageCalculator = React.lazy(() => import('./components/PercentageCalculator').then(module => ({ default: module.PercentageCalculator })));
+const RandomNumberGenerator = React.lazy(() => import('./components/RandomNumberGenerator').then(module => ({ default: module.RandomNumberGenerator })));
+const FractionCalculator = React.lazy(() => import('./components/FractionCalculator').then(module => ({ default: module.FractionCalculator })));
+const GeometryCalculator = React.lazy(() => import('./components/GeometryCalculator').then(module => ({ default: module.GeometryCalculator })));
+const UnitConverter = React.lazy(() => import('./components/UnitConverter').then(module => ({ default: module.UnitConverter })));
+const GPACalculator = React.lazy(() => import('./components/GPACalculator').then(module => ({ default: module.GPACalculator })));
+const PasswordGenerator = React.lazy(() => import('./components/PasswordGenerator').then(module => ({ default: module.PasswordGenerator })));
+const PregnancyCalculator = React.lazy(() => import('./components/PregnancyCalculator').then(module => ({ default: module.PregnancyCalculator })));
+const BodyFatCalculator = React.lazy(() => import('./components/BodyFatCalculator').then(module => ({ default: module.BodyFatCalculator })));
+const BMRCalculator = React.lazy(() => import('./components/BMRCalculator').then(module => ({ default: module.BMRCalculator })));
+const InflationCalculator = React.lazy(() => import('./components/InflationCalculator').then(module => ({ default: module.InflationCalculator })));
+const PaceCalculator = React.lazy(() => import('./components/PaceCalculator').then(module => ({ default: module.PaceCalculator })));
+const ConcreteCalculator = React.lazy(() => import('./components/ConcreteCalculator').then(module => ({ default: module.ConcreteCalculator })));
+const SubnetCalculator = React.lazy(() => import('./components/SubnetCalculator').then(module => ({ default: module.SubnetCalculator })));
+
+// Non-lazy components (Critical UI)
+import { CalculatorList } from './components/CalculatorList';
+import { Sidebar } from './components/Sidebar';
 
 // Data Configuration for "All Calculators"
 const categories: CalculatorCategory[] = [
@@ -93,6 +97,13 @@ const topNavItems = [
   { label: 'Casio Scientific', path: '/casio-scientific' },
   { label: 'Casio Scientific (MS)', path: '/casio-basic-scientific' },
 ];
+
+const Loading = () => (
+  <div className="flex flex-col items-center justify-center min-h-[50vh] text-slate-400">
+    <Loader2 className="w-10 h-10 animate-spin mb-4 text-brand-600" />
+    <p className="text-sm font-medium">Loading Calculator...</p>
+  </div>
+);
 
 const Header: React.FC<{
   onMenuClick: () => void;
@@ -229,7 +240,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         
         {/* Responsive padding */}
         <main className={`flex-1 w-full p-2 md:p-3 lg:p-4 overflow-x-hidden ${isDashboardPage ? 'xl:px-12' : ''}`}>
-          {children}
+          <Suspense fallback={<Loading />}>
+            {children}
+          </Suspense>
         </main>
       </div>
 
@@ -258,11 +271,11 @@ const App: React.FC = () => {
           <Route path="/" element={
             <div className="space-y-4 animate-fade-in">
               <SEO 
-                title="Free Online Scientific Calculator" 
-                description="Advanced free online scientific calculator with trigonometry, logarithms, fractions, and more. Similar to Casio fx-991ES and TI-84. No download required."
-                keywords="scientific calculator, online calculator, trigonometry, free calculator, math solver, casio online"
+                title="Free Online Scientific Calculator | Trigonometry, Fractions & Statistics" 
+                description="World's best free online scientific calculator. Features natural display, fractions, trigonometry, and statistics. No download required. Better than Casio fx-991ES."
+                keywords="casio calculator, scientific calculator, online calculator, trigonometry calculator, free calculator, math solver, casio online, fraction calculator"
               />
-              <div className="text-center mb-2">
+              <div className="text-center mb-2 mt-4 md:mt-8">
                 <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
                   Scientific <span className="text-brand-600">Calculator</span>
                 </h1>
@@ -272,8 +285,8 @@ const App: React.FC = () => {
                 <StandardCalculator />
               </div>
               
-              <div className="mt-12 md:mt-20 max-w-7xl mx-auto">
-                <div className="flex items-center gap-3 mb-8 px-2">
+              <div className="mt-8 md:mt-16 max-w-7xl mx-auto">
+                <div className="flex items-center gap-3 mb-6 px-2">
                   <div className="h-8 w-1.5 bg-brand-600 rounded-full"></div>
                   <h2 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
                     Browse All Calculators

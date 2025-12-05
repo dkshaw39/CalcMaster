@@ -1,4 +1,1 @@
-// Functionality moved to:
-// - RandomNumberGenerator.tsx
-// - FractionCalculator.tsx
-// - PercentageCalculator.tsx
+// File deprecated. Functionality moved to dedicated calculator files.

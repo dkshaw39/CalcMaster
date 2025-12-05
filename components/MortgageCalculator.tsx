@@ -80,9 +80,9 @@ export const MortgageCalculator: React.FC = () => {
   return (
     <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in">
       <SEO 
-        title="Mortgage Calculator with Taxes, Insurance & HOA"
-        description="Calculate your monthly mortgage payment including principal, interest, property taxes, homeowner's insurance, and HOA fees. View amortization and interest costs."
-        keywords="mortgage calculator, amortization schedule, home loan calculator, pmi calculator, mortgage taxes insurance, monthly payment estimator"
+        title="Mortgage Calculator 2025 - With Taxes, Insurance & HOA"
+        description="Calculate your monthly mortgage payment including principal, interest, property taxes, homeowner's insurance, and HOA fees. See your full 2025 amortization schedule."
+        keywords="mortgage calculator, mortgage payment calculator, home loan calculator, pmi calculator, housing costs, amortization schedule 2025"
       />
       <div className="mb-2 pt-2">
         <h1 className="text-2xl font-bold text-slate-900">Mortgage <span className="text-brand-600">Calculator</span></h1>
@@ -119,7 +119,7 @@ export const MortgageCalculator: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Down Payment</label>
                 <div className="flex gap-2">
-                   <div className={`${inputContainerClass} flex-1`}>
+                   <div className={`${inputContainerClass} flex-1 min-w-[120px]`}>
                       <div className={prefixClass}>$</div>
                       <input 
                         type="number" 
@@ -129,7 +129,7 @@ export const MortgageCalculator: React.FC = () => {
                         style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
                       />
                    </div>
-                   <div className={`${inputContainerClass} w-24`}>
+                   <div className={`${inputContainerClass} w-24 shrink-0`}>
                       <input 
                         type="number" 
                         value={downPaymentPercent}
@@ -142,7 +142,8 @@ export const MortgageCalculator: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              {/* Stack on mobile, side-by-side on tablet/desktop */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Loan Term</label>
                   <div className={inputContainerClass}>
@@ -231,9 +232,9 @@ export const MortgageCalculator: React.FC = () => {
            {/* Top Summary Cards */}
            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl relative overflow-hidden group">
-                 <div className="relative z-10">
+                 <div className="relative z-10 min-w-0">
                    <p className="text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">Monthly Payment</p>
-                   <div className="text-3xl lg:text-4xl font-bold tracking-tight mb-1">
+                   <div className="text-3xl lg:text-4xl font-bold tracking-tight mb-1 break-words">
                      ${breakdown?.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                    </div>
                    <p className="text-xs text-brand-400 font-medium">Includes Tax & Insurance</p>
@@ -244,9 +245,9 @@ export const MortgageCalculator: React.FC = () => {
               </div>
 
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                 <div>
+                 <div className="min-w-0">
                     <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Total Interest</p>
-                    <div className="text-2xl font-bold text-amber-500">
+                    <div className="text-2xl font-bold text-amber-500 break-words">
                        ${Math.round(breakdown?.totalInterest || 0).toLocaleString()}
                     </div>
                  </div>
@@ -254,9 +255,9 @@ export const MortgageCalculator: React.FC = () => {
               </div>
 
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                 <div>
+                 <div className="min-w-0">
                     <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Loan Amount</p>
-                    <div className="text-2xl font-bold text-slate-800">
+                    <div className="text-2xl font-bold text-slate-800 break-words">
                        ${breakdown?.loanAmount.toLocaleString()}
                     </div>
                  </div>

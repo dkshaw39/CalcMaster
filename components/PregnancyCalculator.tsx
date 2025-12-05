@@ -91,7 +91,7 @@ export const PregnancyCalculator: React.FC = () => {
                              <div className="bg-slate-900 text-white rounded-2xl p-8 shadow-xl relative overflow-hidden flex flex-col items-center text-center">
                                  <div className="relative z-10">
                                      <div className="text-brand-200 text-xs font-bold uppercase tracking-widest mb-2">Estimated Due Date</div>
-                                     <div className="text-5xl lg:text-6xl font-extrabold tracking-tight mb-2">
+                                     <div className="text-5xl lg:text-6xl font-extrabold tracking-tight mb-2 break-words">
                                          {format(dueDate, 'MMMM do')}
                                      </div>
                                      <div className="text-xl text-slate-300 font-medium">
@@ -117,12 +117,12 @@ export const PregnancyCalculator: React.FC = () => {
                                                  <div className={`w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center z-10 border-4 border-white shadow-sm transition shrink-0 ${currentWeeks >= m.week ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-400'}`}>
                                                     <m.icon size={20} className="md:w-6 md:h-6" />
                                                  </div>
-                                                 <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1 hover:shadow-md transition flex justify-between items-center">
+                                                 <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1 hover:shadow-md transition flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                                                      <div>
                                                          <div className="text-xs font-bold text-slate-400 uppercase mb-0.5">Week {m.week}</div>
                                                          <div className="font-bold text-slate-800">{m.title}</div>
                                                      </div>
-                                                     <div className="text-sm font-bold text-brand-600 bg-brand-50 px-3 py-1 rounded-lg">
+                                                     <div className="text-sm font-bold text-brand-600 bg-brand-50 px-3 py-1 rounded-lg self-start sm:self-auto">
                                                          {format(m.date, 'MMM d')}
                                                      </div>
                                                  </div>

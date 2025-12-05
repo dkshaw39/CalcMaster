@@ -139,39 +139,44 @@ export const GPACalculator: React.FC = () => {
                             </div>
                             
                             <div className="p-4 space-y-3">
-                                <div className="grid grid-cols-[2fr,1fr,1fr,auto] gap-2 text-xs font-bold text-slate-400 uppercase px-2">
+                                {/* Header: Visible only on tablet+ */}
+                                <div className="hidden sm:grid grid-cols-[2fr,1fr,1fr,auto] gap-2 text-xs font-bold text-slate-400 uppercase px-2">
                                     <div>Course Name</div>
                                     <div>Grade</div>
                                     <div>Credits</div>
                                     <div></div>
                                 </div>
+                                
                                 {sem.courses.map(c => (
-                                    <div key={c.id} className="grid grid-cols-[2fr,1fr,1fr,auto] gap-2 items-center">
+                                    <div key={c.id} className="flex flex-col sm:grid sm:grid-cols-[2fr,1fr,1fr,auto] gap-2 p-2 bg-slate-50/50 rounded-lg sm:bg-transparent">
                                         <input 
                                             value={c.name}
                                             onChange={e => updateCourse(sem.id, c.id, 'name', e.target.value)}
-                                            className="p-2 border border-slate-300 rounded-lg text-sm font-medium text-black bg-white"
+                                            className="p-2 border border-slate-300 rounded-lg text-sm font-medium text-black bg-white w-full"
                                             placeholder="Course Name"
                                             style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
                                         />
-                                        <select 
-                                            value={c.grade}
-                                            onChange={e => updateCourse(sem.id, c.id, 'grade', e.target.value)}
-                                            className="p-2 border border-slate-300 rounded-lg text-sm font-bold text-black bg-white cursor-pointer"
-                                            style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
-                                        >
-                                            {Object.keys(points).map(g => <option key={g} value={g}>{g}</option>)}
-                                        </select>
-                                        <input 
-                                            type="number"
-                                            value={c.credits}
-                                            onChange={e => updateCourse(sem.id, c.id, 'credits', Number(e.target.value))}
-                                            className="p-2 border border-slate-300 rounded-lg text-sm font-bold text-black bg-white"
-                                            style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
-                                        />
-                                        <button onClick={() => removeCourse(sem.id, c.id)} className="p-2 text-slate-400 hover:text-red-500">
-                                            <Trash2 size={14}/>
-                                        </button>
+                                        <div className="flex gap-2">
+                                            <select 
+                                                value={c.grade}
+                                                onChange={e => updateCourse(sem.id, c.id, 'grade', e.target.value)}
+                                                className="p-2 border border-slate-300 rounded-lg text-sm font-bold text-black bg-white cursor-pointer flex-1"
+                                                style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                                            >
+                                                {Object.keys(points).map(g => <option key={g} value={g}>{g}</option>)}
+                                            </select>
+                                            <input 
+                                                type="number"
+                                                value={c.credits}
+                                                onChange={e => updateCourse(sem.id, c.id, 'credits', Number(e.target.value))}
+                                                className="p-2 border border-slate-300 rounded-lg text-sm font-bold text-black bg-white flex-1"
+                                                placeholder="Cr"
+                                                style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
+                                            />
+                                            <button onClick={() => removeCourse(sem.id, c.id)} className="p-2 text-slate-400 hover:text-red-500 bg-white border border-slate-200 rounded-lg">
+                                                <Trash2 size={16}/>
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                                 <Button onClick={() => addCourse(sem.id)} variant="ghost" size="sm" className="w-full mt-2 border-dashed border border-slate-300">

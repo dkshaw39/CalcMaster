@@ -124,20 +124,20 @@ export const PercentageCalculator: React.FC = () => {
          {/* Right: Results */}
          <div className="lg:col-span-8 space-y-6">
              <div className="bg-slate-900 text-white rounded-2xl p-10 shadow-xl flex flex-col items-center justify-center min-h-[300px] relative overflow-hidden">
-                 <div className="relative z-10 text-center">
+                 <div className="relative z-10 text-center w-full">
                      <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Calculated Result</div>
                      
                      {activeTab === 0 && (
-                        <div className="text-7xl md:text-8xl font-extrabold tracking-tighter mb-2">{parseFloat(res1.toFixed(2))}</div>
+                        <div className="text-7xl md:text-8xl font-extrabold tracking-tighter mb-2 break-all">{parseFloat(res1.toFixed(2))}</div>
                      )}
                      
                      {activeTab === 1 && (
-                        <div className="text-7xl md:text-8xl font-extrabold tracking-tighter mb-2">{parseFloat(res2.toFixed(2))}<span className="text-4xl text-slate-500">%</span></div>
+                        <div className="text-7xl md:text-8xl font-extrabold tracking-tighter mb-2 break-all">{parseFloat(res2.toFixed(2))}<span className="text-4xl text-slate-500">%</span></div>
                      )}
 
                      {activeTab === 2 && (
                         <div>
-                           <div className={`text-7xl md:text-8xl font-extrabold tracking-tighter mb-2 flex items-center justify-center gap-2 ${isIncrease ? 'text-emerald-400' : res3 < 0 ? 'text-red-400' : 'text-white'}`}>
+                           <div className={`text-7xl md:text-8xl font-extrabold tracking-tighter mb-2 flex items-center justify-center gap-2 flex-wrap break-all ${isIncrease ? 'text-emerald-400' : res3 < 0 ? 'text-red-400' : 'text-white'}`}>
                               {res3 > 0 && '+'}
                               {parseFloat(res3.toFixed(2))}<span className="text-4xl opacity-50">%</span>
                            </div>

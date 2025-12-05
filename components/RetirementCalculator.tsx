@@ -201,11 +201,12 @@ export const RetirementCalculator: React.FC = () => {
           {/* Card 3: Market Assumptions */}
           <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 p-6 md:p-8">
              <SectionHeader icon={TrendingUp} title="Market Assumptions" />
-             <div className="grid grid-cols-2 gap-4">
+             {/* Stacks on mobile, side-by-side on desktop */}
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InputField label="Pre-Retire Return" value={preRetireReturn} onChange={setPreRetireReturn} suffix="%" step={0.1}/>
                 <InputField label="Post-Retire Return" value={postRetireReturn} onChange={setPostRetireReturn} suffix="%" step={0.1}/>
              </div>
-             <div className="grid grid-cols-2 gap-4 mt-4">
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <InputField label="Inflation" value={inflation} onChange={setInflation} suffix="%" step={0.1}/>
                 <InputField label="Contrib. Increase" value={annualIncrease} onChange={setAnnualIncrease} suffix="%" step={0.5}/>
              </div>
@@ -217,13 +218,13 @@ export const RetirementCalculator: React.FC = () => {
         <div className="lg:col-span-8 space-y-6">
            
            {/* Top Stats Cards */}
-           <div className="grid md:grid-cols-2 gap-4">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-2xl relative overflow-hidden group">
                  <div className="relative z-10">
                     <div className="text-brand-200 text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
                        <DollarSign size={14}/> Projected Nest Egg
                     </div>
-                    <div className="text-4xl md:text-5xl font-bold tracking-tighter mb-2">
+                    <div className="text-4xl md:text-5xl font-bold tracking-tighter mb-2 break-all">
                       {formatMoney(simulation.retirementSavings)}
                     </div>
                     <div className="text-sm text-slate-400 font-medium">
@@ -262,15 +263,15 @@ export const RetirementCalculator: React.FC = () => {
 
            {/* Main Graph */}
            <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-6 md:p-8">
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-2">
                  <h3 className="text-lg font-bold text-slate-900">Portfolio Trajectory</h3>
-                 <div className="flex items-center gap-4 text-xs font-medium text-slate-500">
+                 <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500">
                     <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-brand-500"></div>Savings Balance</div>
                     <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-amber-500"></div>Retirement Start</div>
                  </div>
               </div>
               
-              <div className="h-[400px] w-full">
+              <div className="h-[300px] md:h-[400px] w-full">
                  <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={simulation.data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                        <defs>
@@ -332,7 +333,7 @@ export const RetirementCalculator: React.FC = () => {
                 This calculator uses a sophisticated projection model that accounts for:
               </p>
               
-              <div className="grid sm:grid-cols-3 gap-6 mb-8 not-prose">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8 not-prose">
                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
                     <div className="font-bold text-slate-800 mb-1">Compound Growth</div>
                     <div className="text-sm text-slate-600">Your earnings generate their own earnings, accelerating growth over time.</div>

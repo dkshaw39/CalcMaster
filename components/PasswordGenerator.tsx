@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from './Button';
-import { RefreshCw, Copy, ShieldCheck, ShieldAlert, Eye, Volume2, Lock } from 'lucide-react';
+import { RefreshCw, Copy, ShieldCheck, Volume2, Lock } from 'lucide-react';
 import { SEO } from './SEO';
 
 export const PasswordGenerator: React.FC = () => {
@@ -101,7 +101,7 @@ export const PasswordGenerator: React.FC = () => {
                                  <input type="range" min="6" max="64" value={length} onChange={e => setLength(Number(e.target.value))} className="w-full accent-brand-600 cursor-pointer h-2 bg-slate-200 rounded-lg appearance-none"/>
                              </div>
 
-                             <div className="grid grid-cols-2 gap-3">
+                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                  {[
                                      { k: 'upper', l: 'ABC', dis: mode === 'pronounceable' },
                                      { k: 'lower', l: 'abc', dis: mode === 'pronounceable' },
@@ -114,7 +114,7 @@ export const PasswordGenerator: React.FC = () => {
                                            type="checkbox" 
                                            checked={options[o.k as keyof typeof options]} 
                                            onChange={e => setOptions({...options, [o.k]: e.target.checked})}
-                                           className="w-5 h-5 rounded text-brand-600 focus:ring-brand-500"
+                                           className="w-5 h-5 rounded text-brand-600 focus:ring-brand-500 shrink-0"
                                          />
                                          <span className="font-bold text-sm text-slate-700">{o.l}</span>
                                      </label>

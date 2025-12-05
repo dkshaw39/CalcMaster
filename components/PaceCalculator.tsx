@@ -65,7 +65,7 @@ export const PaceCalculator: React.FC = () => {
 
   // Styles
   const inputContainerClass = "bg-white border border-slate-300 rounded-lg p-3 flex items-center shadow-sm focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 transition";
-  const fieldClass = "flex-1 w-full bg-transparent outline-none font-bold text-slate-900 text-center !text-black";
+  const fieldClass = "flex-1 w-full bg-transparent outline-none font-bold text-slate-900 text-center !text-black min-w-0";
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-4 md:space-y-6 animate-fade-in pb-12">
@@ -111,20 +111,20 @@ export const PaceCalculator: React.FC = () => {
                      {mode !== 'time' && (
                         <div className="space-y-2">
                             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide">Time</label>
-                            <div className="flex gap-2">
-                               <div className="flex-1">
+                            <div className="flex flex-col sm:flex-row gap-2">
+                               <div className="flex-1 min-w-0">
                                   <div className={inputContainerClass}>
                                      <input type="number" value={hours} onChange={e => setHours(Number(e.target.value))} className={fieldClass} style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}/>
                                   </div>
                                   <div className="text-[10px] text-center text-slate-400 mt-1 font-bold">Hrs</div>
                                </div>
-                               <div className="flex-1">
+                               <div className="flex-1 min-w-0">
                                   <div className={inputContainerClass}>
                                      <input type="number" value={mins} onChange={e => setMins(Number(e.target.value))} className={fieldClass} style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}/>
                                   </div>
                                   <div className="text-[10px] text-center text-slate-400 mt-1 font-bold">Mins</div>
                                </div>
-                               <div className="flex-1">
+                               <div className="flex-1 min-w-0">
                                   <div className={inputContainerClass}>
                                      <input type="number" value={secs} onChange={e => setSecs(Number(e.target.value))} className={fieldClass} style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}/>
                                   </div>
@@ -208,7 +208,7 @@ export const PaceCalculator: React.FC = () => {
                            <div className="text-brand-400 text-sm font-bold uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
                               <Gauge size={18}/> {res.label}
                            </div>
-                           <div className="text-7xl md:text-8xl font-extrabold tracking-tighter mb-4 leading-none">
+                           <div className="text-6xl md:text-8xl font-extrabold tracking-tighter mb-4 leading-none break-all">
                               {res.val}
                            </div>
                            <div className="inline-block bg-white/10 px-6 py-2 rounded-full text-lg font-medium text-slate-200">

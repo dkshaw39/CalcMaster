@@ -3,8 +3,12 @@ import React, { useState, useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { DollarSign, Briefcase, Calendar, Check } from 'lucide-react';
 import { SEO } from './SEO';
+import { useCurrency } from '../context/CurrencyContext';
 
 export const SalaryCalculator: React.FC = () => {
+  const { currency } = useCurrency();
+  const symbol = currency.symbol;
+
   const [grossSalary, setGrossSalary] = useState(65000);
   const [payFrequency, setPayFrequency] = useState('year'); // year, month, week, hour
   const [filingStatus, setFilingStatus] = useState('single'); // single, married
@@ -77,7 +81,7 @@ export const SalaryCalculator: React.FC = () => {
 
   // Styles
   const inputContainerClass = "flex items-center bg-white border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 overflow-hidden transition shadow-sm h-12";
-  const iconClass = "pl-3 pr-2 text-slate-500";
+  const iconClass = "pl-3 pr-2 text-slate-500 font-bold";
   const fieldClass = "flex-1 w-full h-full p-2 outline-none font-bold text-black min-w-0 bg-transparent !text-black";
 
   return (
@@ -105,7 +109,7 @@ export const SalaryCalculator: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Gross Income</label>
                 <div className={inputContainerClass}>
-                   <div className={iconClass}><DollarSign size={18}/></div>
+                   <div className={iconClass}>{symbol}</div>
                    <input 
                     type="number" 
                     value={grossSalary} 
@@ -165,7 +169,7 @@ export const SalaryCalculator: React.FC = () => {
               <div className="relative z-10 flex-1">
                  <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">Estimated Annual Net Pay</div>
                  <div className="text-5xl lg:text-6xl font-bold tracking-tight mb-2 break-all">
-                    ${Math.round(results.annual.net).toLocaleString()}
+                    {symbol}{Math.round(results.annual.net).toLocaleString()}
                  </div>
                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-sm font-medium text-brand-200">
                     <div className="w-2 h-2 rounded-full bg-brand-400"></div>
@@ -186,7 +190,7 @@ export const SalaryCalculator: React.FC = () => {
                        >
                           {pieData.map((entry, index) => <Cell key={index} fill={entry.color} />)}
                        </Pie>
-                       <Tooltip formatter={(value: number) => `$${Math.round(value).toLocaleString()}`} />
+                       <Tooltip formatter={(value: number) => `${symbol}${Math.round(value).toLocaleString()}`} />
                     </PieChart>
                  </ResponsiveContainer>
               </div>
@@ -215,23 +219,23 @@ export const SalaryCalculator: React.FC = () => {
                  <tbody className="divide-y divide-slate-50">
                    <tr className="hover:bg-slate-50">
                      <td className="px-6 py-4 font-medium text-slate-900">Annually</td>
-                     <td className="px-6 py-4 text-slate-600">${Math.round(results.annual.gross).toLocaleString()}</td>
-                     <td className="px-6 py-4 font-bold text-brand-700 text-lg">${Math.round(results.annual.net).toLocaleString()}</td>
+                     <td className="px-6 py-4 text-slate-600">{symbol}{Math.round(results.annual.gross).toLocaleString()}</td>
+                     <td className="px-6 py-4 font-bold text-brand-700 text-lg">{symbol}{Math.round(results.annual.net).toLocaleString()}</td>
                    </tr>
                    <tr className="hover:bg-slate-50">
                      <td className="px-6 py-4 font-medium text-slate-900">Monthly</td>
-                     <td className="px-6 py-4 text-slate-600">${Math.round(results.monthly.gross).toLocaleString()}</td>
-                     <td className="px-6 py-4 font-bold text-brand-700 text-lg">${Math.round(results.monthly.net).toLocaleString()}</td>
+                     <td className="px-6 py-4 text-slate-600">{symbol}{Math.round(results.monthly.gross).toLocaleString()}</td>
+                     <td className="px-6 py-4 font-bold text-brand-700 text-lg">{symbol}{Math.round(results.monthly.net).toLocaleString()}</td>
                    </tr>
                    <tr className="hover:bg-slate-50">
                      <td className="px-6 py-4 font-medium text-slate-900">Bi-Weekly</td>
-                     <td className="px-6 py-4 text-slate-600">${Math.round(results.biweekly.gross).toLocaleString()}</td>
-                     <td className="px-6 py-4 font-bold text-brand-700 text-lg">${Math.round(results.biweekly.net).toLocaleString()}</td>
+                     <td className="px-6 py-4 text-slate-600">{symbol}{Math.round(results.biweekly.gross).toLocaleString()}</td>
+                     <td className="px-6 py-4 font-bold text-brand-700 text-lg">{symbol}{Math.round(results.biweekly.net).toLocaleString()}</td>
                    </tr>
                    <tr className="hover:bg-slate-50">
                      <td className="px-6 py-4 font-medium text-slate-900">Weekly</td>
-                     <td className="px-6 py-4 text-slate-600">${Math.round(results.weekly.gross).toLocaleString()}</td>
-                     <td className="px-6 py-4 font-bold text-brand-700 text-lg">${Math.round(results.weekly.net).toLocaleString()}</td>
+                     <td className="px-6 py-4 text-slate-600">{symbol}{Math.round(results.weekly.gross).toLocaleString()}</td>
+                     <td className="px-6 py-4 font-bold text-brand-700 text-lg">{symbol}{Math.round(results.weekly.net).toLocaleString()}</td>
                    </tr>
                  </tbody>
                </table>

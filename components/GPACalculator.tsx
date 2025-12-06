@@ -67,9 +67,11 @@ export const GPACalculator: React.FC = () => {
     const updateCourse = (semId: number, courseId: number, field: keyof Course, val: any) => {
         setSemesters(semesters.map(s => {
             if (s.id !== semId) return s;
+            // Enforce positive credits
+            const value = field === 'credits' ? Math.max(0, Number(val)) : val;
             return {
                 ...s,
-                courses: s.courses.map(c => c.id === courseId ? { ...c, [field]: val } : c)
+                courses: s.courses.map(c => c.id === courseId ? { ...c, [field]: value } : c)
             };
         }));
     };
@@ -168,7 +170,7 @@ export const GPACalculator: React.FC = () => {
                                             <input 
                                                 type="number"
                                                 value={c.credits}
-                                                onChange={e => updateCourse(sem.id, c.id, 'credits', Number(e.target.value))}
+                                                onChange={e => updateCourse(sem.id, c.id, 'credits', e.target.value)}
                                                 className="p-2 border border-slate-300 rounded-lg text-sm font-bold text-black bg-white flex-1"
                                                 placeholder="Cr"
                                                 style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}

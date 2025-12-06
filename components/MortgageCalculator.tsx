@@ -2,9 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { SEO } from './SEO';
-import { Home, DollarSign, Percent, Calendar } from 'lucide-react';
+import { Home, DollarSign, Percent, Calendar, PieChart as PieChartIcon } from 'lucide-react';
+import { useCurrency } from '../context/CurrencyContext';
 
 export const MortgageCalculator: React.FC = () => {
+  const { currency } = useCurrency();
+  const symbol = currency.symbol;
+
   const [homeValue, setHomeValue] = useState(400000);
   const [downPayment, setDownPayment] = useState(80000);
   const [downPaymentPercent, setDownPaymentPercent] = useState(20);
@@ -101,7 +105,7 @@ export const MortgageCalculator: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Home Price</label>
                 <div className={inputContainerClass}>
-                  <div className={prefixClass}>$</div>
+                  <div className={prefixClass}>{symbol}</div>
                   <input 
                     type="number" 
                     value={homeValue}
@@ -120,7 +124,7 @@ export const MortgageCalculator: React.FC = () => {
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Down Payment</label>
                 <div className="flex gap-2">
                    <div className={`${inputContainerClass} flex-1 min-w-[120px]`}>
-                      <div className={prefixClass}>$</div>
+                      <div className={prefixClass}>{symbol}</div>
                       <input 
                         type="number" 
                         value={downPayment}
@@ -186,7 +190,7 @@ export const MortgageCalculator: React.FC = () => {
                <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Property Tax / Year</label>
                 <div className={inputContainerClass}>
-                  <div className={prefixClass}>$</div>
+                  <div className={prefixClass}>{symbol}</div>
                   <input 
                     type="number" 
                     value={propertyTax}
@@ -199,7 +203,7 @@ export const MortgageCalculator: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Home Insurance / Year</label>
                 <div className={inputContainerClass}>
-                  <div className={prefixClass}>$</div>
+                  <div className={prefixClass}>{symbol}</div>
                   <input 
                     type="number" 
                     value={insurance}
@@ -212,7 +216,7 @@ export const MortgageCalculator: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">HOA Fees / Month</label>
                 <div className={inputContainerClass}>
-                  <div className={prefixClass}>$</div>
+                  <div className={prefixClass}>{symbol}</div>
                   <input 
                     type="number" 
                     value={hoa}
@@ -235,7 +239,7 @@ export const MortgageCalculator: React.FC = () => {
                  <div className="relative z-10 min-w-0">
                    <p className="text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">Monthly Payment</p>
                    <div className="text-3xl lg:text-4xl font-bold tracking-tight mb-1 break-words">
-                     ${breakdown?.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                     {symbol}{breakdown?.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                    </div>
                    <p className="text-xs text-brand-400 font-medium">Includes Tax & Insurance</p>
                  </div>
@@ -248,7 +252,7 @@ export const MortgageCalculator: React.FC = () => {
                  <div className="min-w-0">
                     <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Total Interest</p>
                     <div className="text-2xl font-bold text-amber-500 break-words">
-                       ${Math.round(breakdown?.totalInterest || 0).toLocaleString()}
+                       {symbol}{Math.round(breakdown?.totalInterest || 0).toLocaleString()}
                     </div>
                  </div>
                  <p className="text-xs text-slate-400 mt-2">Over {loanTerm} years</p>
@@ -258,7 +262,7 @@ export const MortgageCalculator: React.FC = () => {
                  <div className="min-w-0">
                     <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Loan Amount</p>
                     <div className="text-2xl font-bold text-slate-800 break-words">
-                       ${breakdown?.loanAmount.toLocaleString()}
+                       {symbol}{breakdown?.loanAmount.toLocaleString()}
                     </div>
                  </div>
                  <p className="text-xs text-slate-400 mt-2">Principal</p>
@@ -268,7 +272,7 @@ export const MortgageCalculator: React.FC = () => {
            {/* Visualization Section */}
            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-lg border border-slate-200">
              <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
-                <PieChart className="text-brand-600" size={20}/> Payment Breakdown
+                <PieChartIcon className="text-brand-600" size={20}/> Payment Breakdown
              </h3>
              
              <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -289,7 +293,7 @@ export const MortgageCalculator: React.FC = () => {
                          ))}
                        </Pie>
                        <Tooltip 
-                          formatter={(value: number) => `$${Math.round(value)}`} 
+                          formatter={(value: number) => `${symbol}${Math.round(value)}`} 
                           contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                        />
                        <Legend verticalAlign="bottom" height={36}/>
@@ -303,21 +307,21 @@ export const MortgageCalculator: React.FC = () => {
                         <div className="w-3 h-3 rounded-full bg-brand-600"></div>
                         <span className="text-slate-700 text-sm font-medium">Principal & Interest</span>
                       </div>
-                      <span className="font-bold text-slate-900">${Math.round(breakdown?.monthlyPI || 0)}</span>
+                      <span className="font-bold text-slate-900">{symbol}{Math.round(breakdown?.monthlyPI || 0)}</span>
                    </div>
                    <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-sky-500"></div>
                         <span className="text-slate-700 text-sm font-medium">Property Tax</span>
                       </div>
-                      <span className="font-bold text-slate-900">${Math.round(breakdown?.monthlyTax || 0)}</span>
+                      <span className="font-bold text-slate-900">{symbol}{Math.round(breakdown?.monthlyTax || 0)}</span>
                    </div>
                    <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-amber-500"></div>
                         <span className="text-slate-700 text-sm font-medium">Home Insurance</span>
                       </div>
-                      <span className="font-bold text-slate-900">${Math.round(breakdown?.monthlyIns || 0)}</span>
+                      <span className="font-bold text-slate-900">{symbol}{Math.round(breakdown?.monthlyIns || 0)}</span>
                    </div>
                     {hoa > 0 && (
                       <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
@@ -325,7 +329,7 @@ export const MortgageCalculator: React.FC = () => {
                           <div className="w-3 h-3 rounded-full bg-red-500"></div>
                           <span className="text-slate-700 text-sm font-medium">HOA Fees</span>
                         </div>
-                        <span className="font-bold text-slate-900">${hoa}</span>
+                        <span className="font-bold text-slate-900">{symbol}{hoa}</span>
                       </div>
                     )}
                 </div>

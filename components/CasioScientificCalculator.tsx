@@ -78,12 +78,18 @@ export const CasioScientificCalculator: React.FC = () => {
   const calculate = () => {
     try {
       // Replace visual symbols with JS math
+      // IMPORTANT: Inverse trig (asin) must be replaced BEFORE standard trig (sin) to prevent partial matching
       let evalStr = expression
         .replace(/×/g, '*')
         .replace(/÷/g, '/')
         .replace(/π/g, 'Math.PI')
         .replace(/e/g, 'Math.E')
         .replace(/√\(/g, 'Math.sqrt(')
+        // Inverse Trig: Output radians -> Convert to Degrees if needed
+        .replace(/asin\(/g, isDegree ? '(180/Math.PI)*Math.asin(' : 'Math.asin(')
+        .replace(/acos\(/g, isDegree ? '(180/Math.PI)*Math.acos(' : 'Math.acos(')
+        .replace(/atan\(/g, isDegree ? '(180/Math.PI)*Math.atan(' : 'Math.atan(')
+        // Standard Trig: Input Degrees -> Convert to Radians if needed
         .replace(/sin\(/g, isDegree ? 'Math.sin((Math.PI/180)*' : 'Math.sin(')
         .replace(/cos\(/g, isDegree ? 'Math.cos((Math.PI/180)*' : 'Math.cos(')
         .replace(/tan\(/g, isDegree ? 'Math.tan((Math.PI/180)*' : 'Math.tan(')
@@ -198,7 +204,7 @@ export const CasioScientificCalculator: React.FC = () => {
                   <div className="absolute right-0 top-1 flex flex-col gap-4 items-end">
                      <div className="relative pr-1 flex flex-col items-end">
                         <div className="absolute -top-3 right-1 text-[#444] text-[7px] font-bold">MODE</div>
-                        <TopSmallBtn label="MODE" />
+                        <TopSmallBtn label="MODE" onClick={() => setIsDegree(!isDegree)} />
                      </div>
                      <div className="relative pr-1 flex flex-col items-end">
                         <div className="absolute -top-3 right-1 text-[#a88636] text-[7px] font-bold">ON</div>
@@ -218,7 +224,7 @@ export const CasioScientificCalculator: React.FC = () => {
                      <div className="w-4"></div>
                      <div className="flex gap-2 w-full pl-1">
                         <FunctionBtn label="x⁻¹" shiftLabel="x!" />
-                        <FunctionBtn label="log□" shiftLabel="Σ" />
+                        <FunctionBtn label="log□" shiftLabel="Σ" onClick={() => insert('log(')} />
                      </div>
                   </div>
 
@@ -231,12 +237,12 @@ export const CasioScientificCalculator: React.FC = () => {
                       <FunctionBtn label="log" shiftLabel="10ⁿ" onClick={() => insert(shift ? '10^' : 'log(')} />
                       <FunctionBtn label="ln" shiftLabel="eⁿ" onClick={() => insert(shift ? 'e^' : 'ln(')} />
                       
-                      <FunctionBtn label="(-)" shiftLabel="A" />
+                      <FunctionBtn label="(-)" shiftLabel="A" onClick={() => insert('-')} />
                       <FunctionBtn label="°'″" shiftLabel="B" />
                       <FunctionBtn label="hyp" shiftLabel="C" />
-                      <FunctionBtn label="sin" shiftLabel="sin⁻¹" alphaLabel="D" onClick={() => insert('sin(')} />
-                      <FunctionBtn label="cos" shiftLabel="cos⁻¹" alphaLabel="E" onClick={() => insert('cos(')} />
-                      <FunctionBtn label="tan" shiftLabel="tan⁻¹" alphaLabel="F" onClick={() => insert('tan(')} />
+                      <FunctionBtn label="sin" shiftLabel="sin⁻¹" alphaLabel="D" onClick={() => insert(shift ? 'asin(' : 'sin(')} />
+                      <FunctionBtn label="cos" shiftLabel="cos⁻¹" alphaLabel="E" onClick={() => insert(shift ? 'acos(' : 'cos(')} />
+                      <FunctionBtn label="tan" shiftLabel="tan⁻¹" alphaLabel="F" onClick={() => insert(shift ? 'atan(' : 'tan(')} />
 
                       <FunctionBtn label="RCL" shiftLabel="STO" />
                       <FunctionBtn label="ENG" shiftLabel="←" />

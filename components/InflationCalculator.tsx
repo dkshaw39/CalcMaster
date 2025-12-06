@@ -3,8 +3,12 @@ import React, { useState } from 'react';
 import { TrendingUp, DollarSign, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 import { SEO } from './SEO';
+import { useCurrency } from '../context/CurrencyContext';
 
 export const InflationCalculator: React.FC = () => {
+  const { currency } = useCurrency();
+  const symbol = currency.symbol;
+
   const [amount, setAmount] = useState(100);
   const [rate, setRate] = useState(3.5);
   const [years, setYears] = useState(10);
@@ -19,7 +23,7 @@ export const InflationCalculator: React.FC = () => {
 
   // Styles
   const inputContainerClass = "flex items-center bg-white border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 overflow-hidden transition shadow-sm h-12";
-  const iconClass = "pl-3 pr-2 text-slate-400";
+  const iconClass = "pl-3 pr-2 text-slate-400 font-bold";
   const fieldClass = "flex-1 w-full h-full p-2 outline-none font-bold text-black min-w-0 bg-transparent !text-black";
 
   return (
@@ -46,7 +50,7 @@ export const InflationCalculator: React.FC = () => {
                  <div>
                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Current Amount</label>
                    <div className={inputContainerClass}>
-                      <div className={iconClass}><DollarSign size={18}/></div>
+                      <div className={iconClass}>{symbol}</div>
                       <input 
                         type="number" 
                         value={amount} 
@@ -105,7 +109,7 @@ export const InflationCalculator: React.FC = () => {
                        </div>
                     </div>
                     <div className="text-4xl font-bold tracking-tight mb-2">
-                       ${futureValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                       {symbol}{futureValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                     </div>
                     <p className="text-slate-400 text-sm">
                        Cost to buy the same items in {years} years.
@@ -123,11 +127,11 @@ export const InflationCalculator: React.FC = () => {
                        </div>
                     </div>
                     <div className="text-4xl font-bold text-slate-800 tracking-tight mb-2">
-                       ${purchasingPower.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                       {symbol}{purchasingPower.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                     </div>
                  </div>
                  <p className="text-slate-400 text-sm">
-                    Value of today's ${amount} in {years} years.
+                    Value of today's {symbol}{amount} in {years} years.
                  </p>
               </div>
            </div>
@@ -145,7 +149,7 @@ export const InflationCalculator: React.FC = () => {
                            <YAxis hide />
                            <Tooltip 
                               cursor={{fill: 'transparent'}}
-                              formatter={(value: number) => `$${value.toLocaleString()}`}
+                              formatter={(value: number) => `${symbol}${value.toLocaleString()}`}
                               contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                            />
                            <Legend />

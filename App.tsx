@@ -1,10 +1,11 @@
 
 import React, { useState, Suspense } from 'react';
-import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { CalculatorCategory } from './types';
 import { SEO } from './components/SEO';
+import { CurrencyProvider, useCurrency } from './context/CurrencyContext';
 import { 
-  Calculator, DollarSign, Activity, Menu, Grid, X, MoreVertical, Loader2
+  Calculator, DollarSign, Activity, Menu, Grid, X, MoreVertical, Loader2, Globe
 } from 'lucide-react';
 
 // --- Lazy Load Calculators for Performance ---
@@ -40,6 +41,7 @@ const SubnetCalculator = React.lazy(() => import('./components/SubnetCalculator'
 // Non-lazy components (Critical UI)
 import { CalculatorList } from './components/CalculatorList';
 import { Sidebar } from './components/Sidebar';
+import { NotFound } from './components/NotFound';
 
 // Data Configuration for "All Calculators"
 const categories: CalculatorCategory[] = [
@@ -105,6 +107,32 @@ const Loading = () => (
   </div>
 );
 
+const CurrencySelector = () => {
+  const { currency, setCurrencyByCode, availableCurrencies } = useCurrency();
+  
+  return (
+    <div className="relative group">
+      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-full cursor-pointer transition text-xs font-bold text-slate-700">
+        <Globe size={14} className="text-brand-600"/>
+        <span>{currency.code} ({currency.symbol})</span>
+      </div>
+      <div className="absolute top-full right-0 mt-2 w-32 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden hidden group-hover:block z-50 animate-in fade-in zoom-in-95 duration-100">
+        <div className="max-h-64 overflow-y-auto py-1">
+          {availableCurrencies.map(c => (
+            <button
+              key={c.code}
+              onClick={() => setCurrencyByCode(c.code)}
+              className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition ${currency.code === c.code ? 'text-brand-600 bg-brand-50' : 'text-slate-600'}`}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Header: React.FC<{
   onMenuClick: () => void;
   onMobileNavClick: () => void;
@@ -113,7 +141,7 @@ const Header: React.FC<{
   return (
     <header className="sticky top-0 z-50 glass-nav shadow-sm h-14 md:h-16">
       <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between relative z-50 bg-white/95 backdrop-blur-sm">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button 
             onClick={onMenuClick}
             className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-lg lg:hidden"
@@ -132,27 +160,32 @@ const Header: React.FC<{
           </Link>
         </div>
 
-        {/* Desktop Nav - Visible on MD and up */}
-        <nav className="hidden md:flex items-center gap-1">
-          {topNavItems.map(item => (
-            <Link 
-              key={item.label}
-              to={item.path}
-              className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-all"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="flex items-center gap-2 md:gap-4">
+          {/* Desktop Nav - Visible on MD and up */}
+          <nav className="hidden md:flex items-center gap-1">
+            {topNavItems.map(item => (
+              <Link 
+                key={item.label}
+                to={item.path}
+                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-all"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
 
-        {/* Mobile Nav Toggle - Hidden on MD and up */}
-        <div className="flex items-center md:hidden">
-            <button
-              onClick={onMobileNavClick}
-              className={`p-2 rounded-lg transition-colors ${isMobileNavOpen ? 'bg-brand-50 text-brand-600' : 'text-slate-500 hover:bg-slate-100'}`}
-            >
-               {isMobileNavOpen ? <X size={24}/> : <MoreVertical size={24}/>}
-            </button>
+          {/* Currency Selector - Visible Always */}
+          <CurrencySelector />
+
+          {/* Mobile Nav Toggle - Hidden on MD and up */}
+          <div className="flex items-center md:hidden">
+              <button
+                onClick={onMobileNavClick}
+                className={`p-2 rounded-lg transition-colors ${isMobileNavOpen ? 'bg-brand-50 text-brand-600' : 'text-slate-500 hover:bg-slate-100'}`}
+              >
+                {isMobileNavOpen ? <X size={24}/> : <MoreVertical size={24}/>}
+              </button>
+          </div>
         </div>
       </div>
       
@@ -253,7 +286,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </p>
           <div className="mt-4 flex justify-center gap-6 text-sm text-slate-400">
             <span>Privacy Policy</span>
-            <span>Terms of Use</span>
+            <a href="/sitemap.xml" className="hover:text-slate-600 transition">Sitemap</a>
             <span>Contact</span>
           </div>
         </div>
@@ -265,80 +298,82 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 const App: React.FC = () => {
   return (
     <Router>
-      <Layout>
-        <Routes>
-          {/* Home Route */}
-          <Route path="/" element={
-            <div className="space-y-4 animate-fade-in">
-              <SEO 
-                title="Free Online Scientific Calculator | Trigonometry, Fractions & Statistics" 
-                description="World's best free online scientific calculator. Features natural display, fractions, trigonometry, and statistics. No download required. Better than Casio fx-991ES."
-                keywords="casio calculator, scientific calculator, online calculator, trigonometry calculator, free calculator, math solver, casio online, fraction calculator"
-              />
-              <div className="text-center mb-2 mt-4 md:mt-8">
-                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                  Scientific <span className="text-brand-600">Calculator</span>
-                </h1>
-              </div>
+      <CurrencyProvider>
+        <Layout>
+          <Routes>
+            {/* Home Route */}
+            <Route path="/" element={
+              <div className="space-y-4 animate-fade-in">
+                <SEO 
+                  title="Free Online Scientific Calculator | Trigonometry, Fractions & Statistics" 
+                  description="World's best free online scientific calculator. Features natural display, fractions, trigonometry, and statistics. No download required. Better than Casio fx-991ES."
+                  keywords="casio calculator, scientific calculator, online calculator, trigonometry calculator, free calculator, math solver, casio online, fraction calculator"
+                />
+                <div className="text-center mb-2 mt-4 md:mt-8">
+                  <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+                    Scientific <span className="text-brand-600">Calculator</span>
+                  </h1>
+                </div>
 
-              <div className="max-w-4xl mx-auto">
-                <StandardCalculator />
-              </div>
-              
-              <div className="mt-8 md:mt-16 max-w-7xl mx-auto">
-                <div className="flex items-center gap-3 mb-6 px-2">
-                  <div className="h-8 w-1.5 bg-brand-600 rounded-full"></div>
-                  <h2 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
-                    Browse All Calculators
-                  </h2>
+                <div className="max-w-4xl mx-auto">
+                  <StandardCalculator />
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 items-start">
-                  {categories.map((cat) => (
-                    <CalculatorList key={cat.title} category={cat} />
-                  ))}
+                <div className="mt-8 md:mt-16 max-w-7xl mx-auto">
+                  <div className="flex items-center gap-3 mb-6 px-2">
+                    <div className="h-8 w-1.5 bg-brand-600 rounded-full"></div>
+                    <h2 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
+                      Browse All Calculators
+                    </h2>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 items-start">
+                    {categories.map((cat) => (
+                      <CalculatorList key={cat.title} category={cat} />
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          } />
+            } />
 
-          {/* Calculator Routes */}
-          <Route path="/casio" element={<CasioCalculator />} />
-          <Route path="/casio-scientific" element={<CasioScientificCalculator />} />
-          <Route path="/casio-basic-scientific" element={<CasioBasicScientificCalculator />} />
-          
-          <Route path="/mortgage" element={<MortgageCalculator />} />
-          <Route path="/loan" element={<LoanCalculator />} />
-          <Route path="/car-loan" element={<AutoLoanCalculator />} />
-          
-          <Route path="/bmi" element={<BMICalculator />} />
-          <Route path="/calorie" element={<CalorieCalculator />} />
-          <Route path="/body-fat" element={<BodyFatCalculator />} />
-          <Route path="/bmr" element={<BMRCalculator />} />
-          <Route path="/pregnancy" element={<PregnancyCalculator />} />
-          <Route path="/pace" element={<PaceCalculator />} />
+            {/* Calculator Routes */}
+            <Route path="/casio" element={<CasioCalculator />} />
+            <Route path="/casio-scientific" element={<CasioScientificCalculator />} />
+            <Route path="/casio-basic-scientific" element={<CasioBasicScientificCalculator />} />
+            
+            <Route path="/mortgage" element={<MortgageCalculator />} />
+            <Route path="/loan" element={<LoanCalculator />} />
+            <Route path="/car-loan" element={<AutoLoanCalculator />} />
+            
+            <Route path="/bmi" element={<BMICalculator />} />
+            <Route path="/calorie" element={<CalorieCalculator />} />
+            <Route path="/body-fat" element={<BodyFatCalculator />} />
+            <Route path="/bmr" element={<BMRCalculator />} />
+            <Route path="/pregnancy" element={<PregnancyCalculator />} />
+            <Route path="/pace" element={<PaceCalculator />} />
 
-          <Route path="/salary" element={<SalaryCalculator />} />
-          <Route path="/sales-tax" element={<SalesTaxCalculator />} />
-          <Route path="/retirement" element={<RetirementCalculator />} />
-          <Route path="/investment" element={<InvestmentCalculator />} />
-          <Route path="/inflation" element={<InflationCalculator />} />
+            <Route path="/salary" element={<SalaryCalculator />} />
+            <Route path="/sales-tax" element={<SalesTaxCalculator />} />
+            <Route path="/retirement" element={<RetirementCalculator />} />
+            <Route path="/investment" element={<InvestmentCalculator />} />
+            <Route path="/inflation" element={<InflationCalculator />} />
 
-          <Route path="/percentage" element={<PercentageCalculator />} />
-          <Route path="/random" element={<RandomNumberGenerator />} />
-          <Route path="/fraction" element={<FractionCalculator />} />
-          <Route path="/geometry" element={<GeometryCalculator />} />
-          <Route path="/unit-converter" element={<UnitConverter />} />
-          <Route path="/date" element={<DateCalculator />} />
-          <Route path="/gpa" element={<GPACalculator />} />
-          <Route path="/password" element={<PasswordGenerator />} />
-          <Route path="/concrete" element={<ConcreteCalculator />} />
-          <Route path="/subnet" element={<SubnetCalculator />} />
+            <Route path="/percentage" element={<PercentageCalculator />} />
+            <Route path="/random" element={<RandomNumberGenerator />} />
+            <Route path="/fraction" element={<FractionCalculator />} />
+            <Route path="/geometry" element={<GeometryCalculator />} />
+            <Route path="/unit-converter" element={<UnitConverter />} />
+            <Route path="/date" element={<DateCalculator />} />
+            <Route path="/gpa" element={<GPACalculator />} />
+            <Route path="/password" element={<PasswordGenerator />} />
+            <Route path="/concrete" element={<ConcreteCalculator />} />
+            <Route path="/subnet" element={<SubnetCalculator />} />
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Layout>
+            {/* Fallback to NotFound instead of Home */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Layout>
+      </CurrencyProvider>
     </Router>
   );
 };

@@ -11,22 +11,37 @@ export const StandardCalculator: React.FC = () => {
   const [isDegree, setIsDegree] = useState(true);
   const [showSciMobile, setShowSciMobile] = useState(true);
   const [historyText, setHistoryText] = useState('');
+  const [isError, setIsError] = useState(false);
 
   // --- Core Logic ---
 
-  const calculate = (rightOperand: number, pendingOperator: string): number => {
+  const calculate = (rightOperand: number, pendingOperator: string): number | string => {
     const leftOperand = value || 0;
+    let res = 0;
     switch (pendingOperator) {
-      case '+': return leftOperand + rightOperand;
-      case '-': return leftOperand - rightOperand;
-      case '×': return leftOperand * rightOperand;
-      case '÷': return leftOperand / rightOperand;
-      case 'pow': return Math.pow(leftOperand, rightOperand); // x^y
-      default: return rightOperand;
+      case '+': res = leftOperand + rightOperand; break;
+      case '-': res = leftOperand - rightOperand; break;
+      case '×': res = leftOperand * rightOperand; break;
+      case '÷': 
+        if (rightOperand === 0) return 'Error';
+        res = leftOperand / rightOperand; 
+        break;
+      case 'pow': res = Math.pow(leftOperand, rightOperand); break; // x^y
+      default: res = rightOperand;
     }
+    return res;
   };
 
   const inputDigit = (digit: string) => {
+    if (isError) {
+        setDisplay(digit);
+        setIsError(false);
+        setValue(null);
+        setPendingOperator(null);
+        setWaitingForOperand(false);
+        return;
+    }
+
     if (waitingForOperand) {
       setDisplay(digit);
       setWaitingForOperand(false);
@@ -36,6 +51,14 @@ export const StandardCalculator: React.FC = () => {
   };
 
   const inputDecimal = () => {
+    if (isError) {
+        setDisplay('0.');
+        setIsError(false);
+        setValue(null);
+        setPendingOperator(null);
+        setWaitingForOperand(false);
+        return;
+    }
     if (waitingForOperand) {
       setDisplay('0.');
       setWaitingForOperand(false);
@@ -52,20 +75,30 @@ export const StandardCalculator: React.FC = () => {
     setPendingOperator(null);
     setWaitingForOperand(false);
     setHistoryText('');
+    setIsError(false);
   };
 
   const performOperation = (nextOperator: string) => {
+    if (isError) return;
     const inputValue = parseFloat(display);
 
     if (value === null) {
       setValue(inputValue);
       setHistoryText(`${display} ${nextOperator}`);
     } else if (pendingOperator) {
-      const currentValue = value || 0;
-      const newValue = calculate(inputValue, pendingOperator);
-      setValue(newValue);
-      setDisplay(String(newValue));
-      setHistoryText(`${newValue} ${nextOperator}`);
+      const result = calculate(inputValue, pendingOperator);
+      
+      if (result === 'Error') {
+          setDisplay('Error');
+          setIsError(true);
+          setValue(null);
+          setPendingOperator(null);
+          return;
+      }
+
+      setValue(result as number);
+      setDisplay(String(result));
+      setHistoryText(`${result} ${nextOperator}`);
     }
 
     setWaitingForOperand(true);
@@ -73,10 +106,19 @@ export const StandardCalculator: React.FC = () => {
   };
 
   const handleEquals = () => {
+    if (isError) return;
     if (!pendingOperator || value === null) return;
 
     const inputValue = parseFloat(display);
     const result = calculate(inputValue, pendingOperator);
+
+    if (result === 'Error') {
+        setDisplay('Error');
+        setIsError(true);
+        setValue(null);
+        setPendingOperator(null);
+        return;
+    }
 
     setDisplay(String(result));
     setHistoryText(''); // Clear expression history on result
@@ -88,6 +130,7 @@ export const StandardCalculator: React.FC = () => {
   // --- Scientific Functions (Immediate) ---
 
   const performScientific = (func: string) => {
+    if (isError) return;
     const current = parseFloat(display);
     let result = 0;
     
@@ -109,7 +152,7 @@ export const StandardCalculator: React.FC = () => {
       case '10x': result = Math.pow(10, current); break;
       case 'inv': result = 1 / current; break; // 1/x
       case 'fact': 
-        if (current < 0) result = NaN;
+        if (current < 0 || current > 170) result = Infinity; // JS Number limit
         else {
            let r = 1;
            for(let i = 2; i <= Math.floor(current); i++) r *= i;
@@ -123,6 +166,12 @@ export const StandardCalculator: React.FC = () => {
       default: return;
     }
 
+    if (!isFinite(result) || isNaN(result)) {
+        setDisplay('Error');
+        setIsError(true);
+        return;
+    }
+
     // Format output to avoid crazy precision issues
     const formatted = parseFloat(result.toFixed(10)); 
     setDisplay(String(formatted));
@@ -131,6 +180,7 @@ export const StandardCalculator: React.FC = () => {
 
   // --- Memory ---
   const handleMemory = (action: 'MC' | 'MR' | 'M+') => {
+    if (isError) return;
     const current = parseFloat(display);
     if (action === 'MC') setMemory(0);
     if (action === 'MR') {
@@ -191,7 +241,7 @@ export const StandardCalculator: React.FC = () => {
         <div className="text-slate-400 font-mono text-xs md:text-sm h-5 mb-0 opacity-80">{historyText}</div>
 
         {/* Main Display */}
-        <div className="text-white text-4xl md:text-5xl lg:text-6xl font-light tracking-tight overflow-hidden text-ellipsis leading-none">
+        <div className={`text-white text-4xl md:text-5xl lg:text-6xl font-light tracking-tight overflow-hidden text-ellipsis leading-none ${isError ? 'text-red-400' : ''}`}>
           {display}
         </div>
       </div>

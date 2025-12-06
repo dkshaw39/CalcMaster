@@ -83,6 +83,11 @@ export const CasioBasicScientificCalculator: React.FC = () => {
         .replace(/π/g, 'Math.PI')
         .replace(/e/g, 'Math.E')
         .replace(/√\(/g, 'Math.sqrt(')
+        // Inverse Trig First
+        .replace(/asin\(/g, isDegree ? '(180/Math.PI)*Math.asin(' : 'Math.asin(')
+        .replace(/acos\(/g, isDegree ? '(180/Math.PI)*Math.acos(' : 'Math.acos(')
+        .replace(/atan\(/g, isDegree ? '(180/Math.PI)*Math.atan(' : 'Math.atan(')
+        // Standard Trig
         .replace(/sin\(/g, isDegree ? 'Math.sin((Math.PI/180)*' : 'Math.sin(')
         .replace(/cos\(/g, isDegree ? 'Math.cos((Math.PI/180)*' : 'Math.cos(')
         .replace(/tan\(/g, isDegree ? 'Math.tan((Math.PI/180)*' : 'Math.tan(')
@@ -149,9 +154,9 @@ export const CasioBasicScientificCalculator: React.FC = () => {
                     
                     {/* Indicators Overlay */}
                     <div className="absolute top-0 right-1 flex text-[8px] text-black font-bold gap-1 z-20">
-                       <span className={shift ? 'opacity-100' : 'opacity-10'}>S</span>
-                       <span className={alpha ? 'opacity-100' : 'opacity-10'}>A</span>
-                       <span className="opacity-100">{isDegree ? 'D' : 'R'}</span>
+                       <span className="opacity-100">S</span>
+                       <span className="opacity-10">A</span>
+                       <span onClick={() => setIsDegree(!isDegree)} className="opacity-100 cursor-pointer">{isDegree ? 'D' : 'R'}</span>
                     </div>
 
                     {/* Expression Line */}
@@ -189,7 +194,7 @@ export const CasioBasicScientificCalculator: React.FC = () => {
 
                   {/* Right Buttons */}
                   <div className="absolute right-0 top-0 flex gap-3 pr-1">
-                     <TopOvalBtn label="MODE CLR" labelColor="text-white/70" />
+                     <TopOvalBtn label="MODE CLR" labelColor="text-white/70" onClick={() => setIsDegree(!isDegree)} />
                      <TopOvalBtn label="ON" labelColor="text-white/70" onClick={clearAll} />
                   </div>
               </div>
@@ -217,12 +222,12 @@ export const CasioBasicScientificCalculator: React.FC = () => {
                   <FunctionBtn label="log" shiftLabel="10ˣ" onClick={() => insert(shift ? '10^' : 'log(')} />
                   <FunctionBtn label="ln" shiftLabel="eˣ" onClick={() => insert(shift ? 'e^' : 'ln(')} />
                   
-                  <FunctionBtn label="(-)" shiftLabel="A" />
+                  <FunctionBtn label="(-)" shiftLabel="A" onClick={() => insert('-')} />
                   <FunctionBtn label="°'″" shiftLabel="B" />
                   <FunctionBtn label="hyp" shiftLabel="C" />
-                  <FunctionBtn label="sin" shiftLabel="sin⁻¹" alphaLabel="D" onClick={() => insert('sin(')} />
-                  <FunctionBtn label="cos" shiftLabel="cos⁻¹" alphaLabel="E" onClick={() => insert('cos(')} />
-                  <FunctionBtn label="tan" shiftLabel="tan⁻¹" alphaLabel="F" onClick={() => insert('tan(')} />
+                  <FunctionBtn label="sin" shiftLabel="sin⁻¹" alphaLabel="D" onClick={() => insert(shift ? 'asin(' : 'sin(')} />
+                  <FunctionBtn label="cos" shiftLabel="cos⁻¹" alphaLabel="E" onClick={() => insert(shift ? 'acos(' : 'cos(')} />
+                  <FunctionBtn label="tan" shiftLabel="tan⁻¹" alphaLabel="F" onClick={() => insert(shift ? 'atan(' : 'tan(')} />
                   
                   <FunctionBtn label="RCL" shiftLabel="STO" />
                   <FunctionBtn label="ENG" shiftLabel="←" />

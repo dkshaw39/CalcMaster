@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Box, Circle, Triangle, Cylinder, Square, Ruler } from 'lucide-react';
+import { Circle, Triangle, Cylinder, Square, Ruler } from 'lucide-react';
 import { SEO } from './SEO';
 
 export const GeometryCalculator: React.FC = () => {
@@ -9,7 +9,11 @@ export const GeometryCalculator: React.FC = () => {
   // Dynamic Inputs
   const [val1, setVal1] = useState(10); // L / Base / Radius
   const [val2, setVal2] = useState(5);  // W / Height
-  const [val3, setVal3] = useState(2);  // Side 3 / Height 3D
+  
+  // Logic
+  // Safety: Dimensions must be positive
+  const v1 = Math.abs(val1);
+  const v2 = Math.abs(val2);
 
   let area = 0;
   let volume = 0;
@@ -17,36 +21,35 @@ export const GeometryCalculator: React.FC = () => {
   let formulaArea = '';
   let formulaVol = '';
 
-  // Logic
   switch (shape) {
     case 'rectangle':
-      area = val1 * val2;
-      perimeter = 2 * (val1 + val2);
+      area = v1 * v2;
+      perimeter = 2 * (v1 + v2);
       formulaArea = 'A = l × w';
       break;
     case 'triangle':
-      area = 0.5 * val1 * val2;
+      area = 0.5 * v1 * v2;
       formulaArea = 'A = ½ × b × h';
       break;
     case 'circle':
-      area = Math.PI * Math.pow(val1, 2);
-      perimeter = 2 * Math.PI * val1; 
+      area = Math.PI * Math.pow(v1, 2);
+      perimeter = 2 * Math.PI * v1; 
       formulaArea = 'A = πr²';
       break;
     case 'cylinder':
-      volume = Math.PI * Math.pow(val1, 2) * val2;
-      area = (2 * Math.PI * val1 * val2) + (2 * Math.PI * Math.pow(val1, 2)); 
+      volume = Math.PI * Math.pow(v1, 2) * v2;
+      area = (2 * Math.PI * v1 * v2) + (2 * Math.PI * Math.pow(v1, 2)); 
       formulaVol = 'V = πr²h';
       formulaArea = 'SA = 2πrh + 2πr²';
       break;
     case 'sphere':
-      volume = (4/3) * Math.PI * Math.pow(val1, 3);
-      area = 4 * Math.PI * Math.pow(val1, 2); 
+      volume = (4/3) * Math.PI * Math.pow(v1, 3);
+      area = 4 * Math.PI * Math.pow(v1, 2); 
       formulaVol = 'V = 4/3 πr³';
       formulaArea = 'SA = 4πr²';
       break;
     case 'cone':
-      volume = Math.PI * Math.pow(val1, 2) * (val2 / 3);
+      volume = Math.PI * Math.pow(v1, 2) * (v2 / 3);
       formulaVol = 'V = πr²(h/3)';
       break;
   }
@@ -162,7 +165,8 @@ export const GeometryCalculator: React.FC = () => {
                  </div>
                  {/* BG Graphic */}
                  <div className="absolute right-0 bottom-0 opacity-10 p-8">
-                    <Box size={200}/>
+                    {/* Simplified graphics for performance */}
+                    <div className="border-[20px] border-white w-48 h-48 rounded-full"></div>
                  </div>
              </div>
          </div>

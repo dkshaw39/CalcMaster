@@ -19,14 +19,15 @@ export const ConcreteCalculator: React.FC = () => {
   const calculate = () => {
     let volCuFt = 0;
     
+    // Safety: Use absolute values to prevent negative volumes from typos
     if (type === 'slab') {
-        volCuFt = len * width * (depth / 12);
+        volCuFt = Math.abs(len) * Math.abs(width) * (Math.abs(depth) / 12);
     } else {
-        const radiusFt = (diameter / 2) / 12;
-        volCuFt = Math.PI * Math.pow(radiusFt, 2) * height;
+        const radiusFt = (Math.abs(diameter) / 2) / 12;
+        volCuFt = Math.PI * Math.pow(radiusFt, 2) * Math.abs(height);
     }
 
-    volCuFt *= quantity;
+    volCuFt *= Math.abs(quantity);
 
     const volCuYd = volCuFt / 27;
     const bags60 = volCuFt / 0.45; // Approx 0.45 cu ft per 60lb bag
@@ -149,7 +150,7 @@ export const ConcreteCalculator: React.FC = () => {
                  <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
                     <ShoppingBag size={18} className="text-brand-600"/> Premix Bags Needed
                  </h3>
-                 <div className="grid grid-cols-2 gap-6">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="p-6 bg-slate-50 rounded-xl border border-slate-100 flex flex-col items-center justify-center text-center">
                         <div className="text-4xl font-bold text-slate-900 mb-1">{Math.ceil(res.bags60)}</div>
                         <div className="text-xs font-bold text-slate-500 uppercase tracking-wide">60lb Bags</div>

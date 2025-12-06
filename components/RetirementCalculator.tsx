@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { DollarSign, TrendingUp, Clock, AlertCircle, PieChart, Percent, Calendar } from 'lucide-react';
 import { SEO } from './SEO';
+import { useCurrency } from '../context/CurrencyContext';
 
 interface YearlyData {
   age: number;
@@ -21,11 +22,14 @@ const SectionHeader = ({ icon: Icon, title }: { icon: any, title: string }) => (
   </h3>
 );
 
-const InputField = ({ label, value, onChange, icon: Icon, suffix, min, max, step }: any) => (
+const InputField = ({ label, value, onChange, icon: Icon, prefix, suffix, min, max, step }: any) => (
   <div className="group">
     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5 ml-1">{label}</label>
     <div className="flex items-center bg-white border border-slate-300 rounded-xl overflow-hidden focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-500/20 transition-all shadow-sm relative">
-      {Icon && (
+      {prefix && (
+        <div className="pl-3 pr-1 text-slate-500 font-bold select-none">{prefix}</div>
+      )}
+      {Icon && !prefix && (
         <div className="pl-3 text-slate-400 shrink-0">
           <Icon size={18} />
         </div>
@@ -36,7 +40,7 @@ const InputField = ({ label, value, onChange, icon: Icon, suffix, min, max, step
         onChange={e => onChange(e.target.value === '' ? 0 : parseFloat(e.target.value))}
         min={min} max={max} step={step}
         style={{ color: '#000000', opacity: 1, WebkitTextFillColor: '#000000' }}
-        className={`flex-1 w-full bg-transparent text-black font-bold py-3 ${Icon ? 'pl-2' : 'pl-4'} ${suffix ? 'pr-2' : 'pr-4'} outline-none min-w-0 placeholder-slate-400 relative z-10 !text-black`}
+        className={`flex-1 w-full bg-transparent text-black font-bold py-3 ${Icon || prefix ? 'pl-2' : 'pl-4'} ${suffix ? 'pr-2' : 'pr-4'} outline-none min-w-0 placeholder-slate-400 relative z-10 !text-black`}
       />
       {suffix && (
         <div className="bg-slate-50 border-l border-slate-100 px-3 py-3 text-slate-600 font-bold text-sm whitespace-nowrap shrink-0 h-full flex items-center">
@@ -66,6 +70,9 @@ const SliderField = ({ label, value, onChange, min, max, suffix = '' }: any) => 
 );
 
 export const RetirementCalculator: React.FC = () => {
+  const { currency } = useCurrency();
+  const symbol = currency.symbol;
+
   // --- Inputs ---
   const [currentAge, setCurrentAge] = useState(30);
   const [retireAge, setRetireAge] = useState(65);
@@ -83,6 +90,11 @@ export const RetirementCalculator: React.FC = () => {
 
   // --- Calculations ---
   const simulation = useMemo(() => {
+    // Safety caps
+    const startAge = Math.min(Math.max(currentAge, 18), 100);
+    const endAge = Math.min(Math.max(lifeExpectancy, startAge + 1), 120);
+    const retire = Math.min(Math.max(retireAge, startAge), endAge);
+
     let balance = currentSavings;
     let contribution = monthlyContribution * 12;
     
@@ -90,8 +102,8 @@ export const RetirementCalculator: React.FC = () => {
     let runOutAge: number | null = null;
     let maxSavings = 0;
 
-    for (let age = currentAge; age <= lifeExpectancy; age++) {
-      const isRetired = age >= retireAge;
+    for (let age = startAge; age <= endAge; age++) {
+      const isRetired = age >= retire;
       
       let yearlyInterest = 0;
       let yearlyContribution = 0;
@@ -108,7 +120,7 @@ export const RetirementCalculator: React.FC = () => {
         contribution = contribution * (1 + annualIncrease / 100);
       } else {
         // Calculate needed income adjusted for inflation
-        const inflationFactor = Math.pow(1 + inflation / 100, age - currentAge);
+        const inflationFactor = Math.pow(1 + inflation / 100, age - startAge);
         yearlyWithdrawal = desiredIncome * inflationFactor;
       }
 
@@ -132,7 +144,7 @@ export const RetirementCalculator: React.FC = () => {
       });
     }
 
-    const retirementSavings = data.find(d => d.age === retireAge)?.savings || 0;
+    const retirementSavings = data.find(d => d.age === retire)?.savings || 0;
 
     return {
       data,
@@ -142,7 +154,7 @@ export const RetirementCalculator: React.FC = () => {
     };
   }, [currentAge, retireAge, lifeExpectancy, currentSavings, monthlyContribution, annualIncrease, preRetireReturn, postRetireReturn, inflation, desiredIncome]);
 
-  const formatMoney = (val: number) => `$${val.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  const formatMoney = (val: number) => `${symbol}${val.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-fade-in pb-12">
@@ -180,20 +192,20 @@ export const RetirementCalculator: React.FC = () => {
                   label="Current Savings" 
                   value={currentSavings} 
                   onChange={setCurrentSavings} 
-                  icon={DollarSign} 
+                  prefix={symbol}
                 />
                 <InputField 
                   label="Monthly Contribution" 
                   value={monthlyContribution} 
                   onChange={setMonthlyContribution} 
-                  icon={Calendar} 
+                  prefix={symbol}
                 />
                 <InputField 
                   label="Annual Income Needed" 
                   value={desiredIncome} 
                   onChange={setDesiredIncome} 
-                  icon={PieChart}
-                  suffix="(Today's $)"
+                  prefix={symbol}
+                  suffix="(Today's Value)"
                 />
              </div>
           </div>
@@ -292,7 +304,7 @@ export const RetirementCalculator: React.FC = () => {
                        <YAxis 
                           stroke="#94a3b8" 
                           tick={{fontSize: 12, fill: '#64748b'}}
-                          tickFormatter={(value) => `$${value/1000}k`}
+                          tickFormatter={(value) => `${symbol}${value/1000}k`}
                           axisLine={false}
                           tickLine={false}
                           dx={-10}

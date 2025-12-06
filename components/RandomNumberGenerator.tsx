@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Shuffle, List, ArrowDownUp } from 'lucide-react';
+import { Shuffle, List } from 'lucide-react';
 import { Button } from './Button';
 import { SEO } from './SEO';
 
@@ -15,21 +15,30 @@ export const RandomNumberGenerator: React.FC = () => {
 
     const generate = () => {
         let nums: number[] = [];
-        const range = max - min + 1;
+        // Safety: Swap if min > max
+        const trueMin = Math.min(min, max);
+        const trueMax = Math.max(min, max);
+        const range = trueMax - trueMin + 1;
         
-        if (!allowDuplicates && count > range) {
+        // Safety: Don't crash browser
+        const safeCount = Math.min(1000, Math.max(1, count));
+
+        if (!allowDuplicates && safeCount > range) {
            alert("Range is too small for unique numbers.");
            return;
         }
 
         if (allowDuplicates) {
-           for(let i=0; i<count; i++) {
-              nums.push(Math.floor(Math.random() * range) + min);
+           for(let i=0; i<safeCount; i++) {
+              nums.push(Math.floor(Math.random() * range) + trueMin);
            }
         } else {
            const set = new Set<number>();
-           while(set.size < count) {
-              set.add(Math.floor(Math.random() * range) + min);
+           // Safety breakout loop
+           let attempts = 0;
+           while(set.size < safeCount && attempts < 10000) {
+              set.add(Math.floor(Math.random() * range) + trueMin);
+              attempts++;
            }
            nums = Array.from(set);
         }

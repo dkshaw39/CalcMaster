@@ -15,11 +15,21 @@ export const BodyFatCalculator: React.FC = () => {
   const calculate = () => {
     // US Navy Method
     let bf = 0;
+    // Safety: Log arguments must be positive
+    // Male: waist - neck
+    // Female: waist + hip - neck
+    
     if (gender === 'male') {
-        bf = 495 / (1.0324 - 0.19077 * Math.log10(waist - neck) + 0.15456 * Math.log10(height)) - 450;
+        const val = waist - neck;
+        if (val <= 0) return 0; // Invalid measurement
+        bf = 495 / (1.0324 - 0.19077 * Math.log10(val) + 0.15456 * Math.log10(height)) - 450;
     } else {
-        bf = 495 / (1.29579 - 0.35004 * Math.log10(waist + hip - neck) + 0.22100 * Math.log10(height)) - 450;
+        const val = waist + hip - neck;
+        if (val <= 0) return 0; // Invalid measurement
+        bf = 495 / (1.29579 - 0.35004 * Math.log10(val) + 0.22100 * Math.log10(height)) - 450;
     }
+    
+    if (isNaN(bf) || !isFinite(bf)) return 0;
     return Math.max(2, Math.min(bf, 60)); 
   };
 
@@ -28,6 +38,8 @@ export const BodyFatCalculator: React.FC = () => {
   const leanMass = weight - fatMass;
 
   const getCategory = (bf: number, g: string) => {
+     if (bf === 0) return { label: 'Invalid Data', color: 'text-slate-400', bg: 'bg-slate-100' };
+     
      if (g === 'male') {
          if (bf < 6) return { label: 'Essential Fat', color: 'text-blue-600', bg: 'bg-blue-50' };
          if (bf < 14) return { label: 'Athletes', color: 'text-green-600', bg: 'bg-green-50' };
@@ -160,7 +172,7 @@ export const BodyFatCalculator: React.FC = () => {
                         <span className="text-slate-900">{fatMass.toFixed(1)} kg</span>
                      </div>
                      <div className="h-4 bg-slate-100 rounded-full overflow-hidden">
-                        <div style={{ width: `${bodyFat}%` }} className="h-full bg-amber-500"></div>
+                        <div style={{ width: `${Math.min(100, bodyFat)}%` }} className="h-full bg-amber-500 transition-all duration-1000"></div>
                      </div>
                   </div>
                   <div>
@@ -169,7 +181,7 @@ export const BodyFatCalculator: React.FC = () => {
                         <span className="text-slate-900">{leanMass.toFixed(1)} kg</span>
                      </div>
                      <div className="h-4 bg-slate-100 rounded-full overflow-hidden">
-                        <div style={{ width: `${100 - bodyFat}%` }} className="h-full bg-brand-600"></div>
+                        <div style={{ width: `${Math.max(0, 100 - bodyFat)}%` }} className="h-full bg-brand-600 transition-all duration-1000"></div>
                      </div>
                   </div>
                </div>

@@ -4,6 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Ba
 import { Calendar, DollarSign, Percent, Clock, PieChart as PieIcon, ArrowRight } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
 import { SEO } from './SEO';
+import { useCurrency } from '../context/CurrencyContext';
 
 interface AmortizationRow {
   date: string;
@@ -14,6 +15,9 @@ interface AmortizationRow {
 }
 
 export const LoanCalculator: React.FC = () => {
+  const { currency } = useCurrency();
+  const symbol = currency.symbol;
+
   // Inputs
   const [loanAmount, setLoanAmount] = useState(25000);
   const [interestRate, setInterestRate] = useState(5.5);
@@ -71,7 +75,7 @@ export const LoanCalculator: React.FC = () => {
 
   // Styles
   const inputContainerClass = "flex items-center bg-white border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 overflow-hidden transition shadow-sm h-12";
-  const iconClass = "pl-3 pr-2 text-slate-400";
+  const iconClass = "pl-3 pr-2 text-slate-400 font-bold";
   const suffixClass = "pr-3 pl-2 text-slate-500 font-bold select-none bg-slate-50 h-full flex items-center border-l border-slate-100";
   const fieldClass = "w-full p-2 h-full outline-none font-bold text-black min-w-0 bg-transparent !text-black";
 
@@ -100,7 +104,7 @@ export const LoanCalculator: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Loan Amount</label>
                 <div className={inputContainerClass}>
-                  <div className={iconClass}><DollarSign size={18} /></div>
+                  <div className={iconClass}>{symbol}</div>
                   <input 
                     type="number" 
                     value={loanAmount} 
@@ -181,7 +185,7 @@ export const LoanCalculator: React.FC = () => {
                 <div className="relative z-10 min-w-0">
                   <p className="text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">Monthly Payment</p>
                   <div className="text-3xl md:text-4xl font-bold tracking-tight mb-1 break-all">
-                    ${calculations.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {symbol}{calculations.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
                 <div className="absolute right-0 bottom-0 p-4 opacity-10 group-hover:opacity-20 transition">
@@ -193,7 +197,7 @@ export const LoanCalculator: React.FC = () => {
                 <div className="min-w-0">
                   <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Total Interest</p>
                   <div className="text-2xl font-bold text-amber-500 break-all">
-                    ${calculations.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {symbol}{calculations.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
                 <div className="text-xs text-slate-400 mt-2">Cost of borrowing</div>
@@ -203,7 +207,7 @@ export const LoanCalculator: React.FC = () => {
                 <div className="min-w-0">
                   <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Total Payoff</p>
                   <div className="text-2xl font-bold text-slate-700 break-all">
-                    ${calculations.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {symbol}{calculations.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
                 <div className="text-xs text-slate-400 mt-2">Principal + Interest</div>
@@ -232,6 +236,7 @@ export const LoanCalculator: React.FC = () => {
                       <Tooltip 
                          cursor={{fill: 'transparent'}}
                          contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                         formatter={(value: number) => `${symbol}${value.toLocaleString()}`}
                       />
                       <Legend />
                       <Bar dataKey="principal" name="Principal" stackId="a" fill="#0284c7" radius={[4, 0, 0, 4]} barSize={60} />
@@ -245,14 +250,14 @@ export const LoanCalculator: React.FC = () => {
                         <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold">P</div>
                         <div className="min-w-0 flex-1">
                            <div className="text-xs text-slate-500 font-bold uppercase">Principal</div>
-                           <div className="text-lg font-bold text-slate-900 break-all">${loanAmount.toLocaleString()}</div>
+                           <div className="text-lg font-bold text-slate-900 break-all">{symbol}{loanAmount.toLocaleString()}</div>
                         </div>
                     </div>
                     <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
                         <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center font-bold">I</div>
                         <div className="min-w-0 flex-1">
                            <div className="text-xs text-slate-500 font-bold uppercase">Interest</div>
-                           <div className="text-lg font-bold text-slate-900 break-all">${Math.round(calculations.totalInterest).toLocaleString()}</div>
+                           <div className="text-lg font-bold text-slate-900 break-all">{symbol}{Math.round(calculations.totalInterest).toLocaleString()}</div>
                         </div>
                     </div>
                 </div>
@@ -286,10 +291,10 @@ export const LoanCalculator: React.FC = () => {
                   {calculations.schedule.map((row, index) => (
                     <tr key={index} className="hover:bg-slate-50 transition-colors">
                       <td className="px-3 md:px-6 py-3 font-medium text-slate-900 whitespace-nowrap">{row.date}</td>
-                      <td className="px-3 md:px-6 py-3 text-slate-600 whitespace-nowrap">${row.payment.toFixed(2)}</td>
-                      <td className="px-3 md:px-6 py-3 text-slate-600 font-medium whitespace-nowrap">${row.principal.toFixed(2)}</td>
-                      <td className="px-3 md:px-6 py-3 text-slate-600 whitespace-nowrap">${row.interest.toFixed(2)}</td>
-                      <td className="px-3 md:px-6 py-3 text-slate-900 font-bold text-right whitespace-nowrap">${row.balance.toFixed(2)}</td>
+                      <td className="px-3 md:px-6 py-3 text-slate-600 whitespace-nowrap">{symbol}{row.payment.toFixed(2)}</td>
+                      <td className="px-3 md:px-6 py-3 text-slate-600 font-medium whitespace-nowrap">{symbol}{row.principal.toFixed(2)}</td>
+                      <td className="px-3 md:px-6 py-3 text-slate-600 whitespace-nowrap">{symbol}{row.interest.toFixed(2)}</td>
+                      <td className="px-3 md:px-6 py-3 text-slate-900 font-bold text-right whitespace-nowrap">{symbol}{row.balance.toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

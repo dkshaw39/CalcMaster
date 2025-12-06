@@ -14,8 +14,13 @@ export const CalorieCalculator: React.FC = () => {
   const [result, setResult] = useState<number | null>(null);
 
   const calculate = () => {
+    // Validate inputs
+    const w = Math.max(1, weight);
+    const h = Math.max(1, height);
+    const a = Math.max(1, age);
+
     // Mifflin-St Jeor Equation
-    let bmr = (10 * weight) + (6.25 * height) - (5 * age);
+    let bmr = (10 * w) + (6.25 * h) - (5 * a);
     if (gender === 'male') {
       bmr += 5;
     } else {
@@ -29,7 +34,7 @@ export const CalorieCalculator: React.FC = () => {
     if (goal === 'cut') target = tdee - 500;
     if (goal === 'bulk') target = tdee + 500;
     
-    setResult(target);
+    setResult(Math.max(0, target));
   };
 
   // Macro Splits
@@ -145,7 +150,7 @@ export const CalorieCalculator: React.FC = () => {
 
         {/* Results Section */}
         <div className="lg:col-span-8 space-y-6">
-           {result ? (
+           {result !== null ? (
                <>
                  {/* Top Hero */}
                  <div className="bg-slate-900 text-white rounded-2xl p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">

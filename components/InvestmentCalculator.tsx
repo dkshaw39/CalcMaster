@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, BarChart, Bar } from 'recharts';
 import { DollarSign, TrendingUp, Calendar, PieChart, Table as TableIcon, RefreshCw, ArrowUpRight } from 'lucide-react';
 import { SEO } from './SEO';
+import { useCurrency } from '../context/CurrencyContext';
 
 // --- Reusable Input Component (High Visibility) ---
 const InputGroup = ({ label, value, onChange, prefix, suffix, type = "number", min, max, step }: any) => (
@@ -54,6 +55,9 @@ const SelectGroup = ({ label, value, onChange, options }: any) => (
 );
 
 export const InvestmentCalculator: React.FC = () => {
+  const { currency } = useCurrency();
+  const symbol = currency.symbol;
+
   const [startingAmount, setStartingAmount] = useState(10000);
   const [contribution, setContribution] = useState(500);
   const [contributionFreq, setContributionFreq] = useState('monthly');
@@ -66,10 +70,11 @@ export const InvestmentCalculator: React.FC = () => {
 
   const results = useMemo(() => {
     // Safety parsing
-    const start = Number(startingAmount) || 0;
-    const contrib = Number(contribution) || 0;
+    const start = Math.abs(Number(startingAmount)) || 0;
+    const contrib = Math.abs(Number(contribution)) || 0;
     const rate = Number(returnRate) || 0;
-    const time = Number(years) || 0;
+    // Cap duration to 100 years to prevent browser freeze
+    const time = Math.min(Math.abs(Number(years)), 100) || 0;
     const inflation = Number(inflationRate) || 0;
 
     let balance = start;
@@ -165,7 +170,7 @@ export const InvestmentCalculator: React.FC = () => {
                  <div className="space-y-4">
                     <InputGroup 
                       label="Starting Amount" 
-                      prefix="$" 
+                      prefix={symbol} 
                       value={startingAmount} 
                       onChange={setStartingAmount} 
                     />
@@ -175,6 +180,7 @@ export const InvestmentCalculator: React.FC = () => {
                          value={years} 
                          onChange={setYears} 
                          suffix="Years"
+                         max={100}
                        />
                        <InputGroup 
                          label="Return Rate" 
@@ -191,7 +197,7 @@ export const InvestmentCalculator: React.FC = () => {
                        <div className="md:col-span-2">
                           <InputGroup 
                             label="Contributions" 
-                            prefix="$" 
+                            prefix={symbol} 
                             value={contribution} 
                             onChange={setContribution} 
                           />
@@ -246,7 +252,7 @@ export const InvestmentCalculator: React.FC = () => {
                        End Balance <ArrowUpRight size={14}/>
                     </div>
                     <div className="text-3xl lg:text-3xl xl:text-4xl font-bold tracking-tight mb-2 break-words">
-                       ${results.endBalance.toLocaleString()}
+                       {symbol}{results.endBalance.toLocaleString()}
                     </div>
                     <div className="flex items-center gap-2 text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded w-fit">
                        <TrendingUp size={12}/> 
@@ -263,7 +269,7 @@ export const InvestmentCalculator: React.FC = () => {
                  <div className="min-w-0">
                     <div className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Total Interest</div>
                     <div className="text-2xl lg:text-2xl xl:text-3xl font-bold text-brand-600 break-words">
-                       ${results.totalInterest.toLocaleString()}
+                       {symbol}{results.totalInterest.toLocaleString()}
                     </div>
                  </div>
                  <div className="mt-2 w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
@@ -279,7 +285,7 @@ export const InvestmentCalculator: React.FC = () => {
                  <div className="min-w-0">
                     <div className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Total Principal</div>
                     <div className="text-2xl lg:text-2xl xl:text-3xl font-bold text-slate-800 break-words">
-                       ${results.totalPrincipal.toLocaleString()}
+                       {symbol}{results.totalPrincipal.toLocaleString()}
                     </div>
                  </div>
                  <div className="mt-2 w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
@@ -333,13 +339,13 @@ export const InvestmentCalculator: React.FC = () => {
                              <YAxis 
                                 stroke="#94a3b8" 
                                 tick={{fontSize: 12, fill: '#64748b'}}
-                                tickFormatter={(val) => `$${val >= 1000 ? (val/1000).toFixed(0) + 'k' : val}`}
+                                tickFormatter={(val) => `${symbol}${val >= 1000 ? (val/1000).toFixed(0) + 'k' : val}`}
                                 tickLine={false}
                                 axisLine={false}
                                 width={40}
                              />
                              <Tooltip 
-                                formatter={(val: number) => `$${val.toLocaleString()}`}
+                                formatter={(val: number) => `${symbol}${val.toLocaleString()}`}
                                 contentStyle={{ 
                                    backgroundColor: 'rgba(255, 255, 255, 0.95)', 
                                    borderRadius: '12px', 
@@ -398,9 +404,9 @@ export const InvestmentCalculator: React.FC = () => {
                              {results.data.map((row) => (
                                 <tr key={row.year} className="hover:bg-slate-50 transition-colors">
                                    <td className="px-4 md:px-6 py-3 font-medium text-slate-900">{row.year}</td>
-                                   <td className="px-4 md:px-6 py-3 text-slate-600">${row.principal.toLocaleString()}</td>
-                                   <td className="px-4 md:px-6 py-3 text-brand-600 font-bold">+${row.interest.toLocaleString()}</td>
-                                   <td className="px-4 md:px-6 py-3 text-slate-900 font-bold text-right">${row.balance.toLocaleString()}</td>
+                                   <td className="px-4 md:px-6 py-3 text-slate-600">{symbol}{row.principal.toLocaleString()}</td>
+                                   <td className="px-4 md:px-6 py-3 text-brand-600 font-bold">+{symbol}{row.interest.toLocaleString()}</td>
+                                   <td className="px-4 md:px-6 py-3 text-slate-900 font-bold text-right">{symbol}{row.balance.toLocaleString()}</td>
                                 </tr>
                              ))}
                           </tbody>

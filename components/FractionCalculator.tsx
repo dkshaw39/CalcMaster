@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Divide, Equal, Plus } from 'lucide-react';
+import { Divide } from 'lucide-react';
 import { SEO } from './SEO';
 
 export const FractionCalculator: React.FC = () => {
@@ -18,22 +18,28 @@ export const FractionCalculator: React.FC = () => {
 
   // Logic
   const calculate = () => {
+     // Safety: Denominators cannot be 0
+     const safeDenA = denA === 0 ? 1 : denA;
+     const safeDenB = denB === 0 ? 1 : denB;
+
      // Convert to improper
      const wA = Number(wholeA) || 0;
-     const nA = (wA * denA) + numA;
+     const nA = (wA * safeDenA) + numA;
      
      const wB = Number(wholeB) || 0;
-     const nB = (wB * denB) + numB;
+     const nB = (wB * safeDenB) + numB;
 
      let resNum = 0;
-     let resDen = denA * denB;
+     let resDen = safeDenA * safeDenB;
 
      switch(op) {
-        case '+': resNum = (nA * denB) + (nB * denA); break;
-        case '-': resNum = (nA * denB) - (nB * denA); break;
-        case '*': resNum = nA * nB; resDen = denA * denB; break;
-        case '/': resNum = nA * denB; resDen = denA * nB; break;
+        case '+': resNum = (nA * safeDenB) + (nB * safeDenA); break;
+        case '-': resNum = (nA * safeDenB) - (nB * safeDenA); break;
+        case '*': resNum = nA * nB; resDen = safeDenA * safeDenB; break;
+        case '/': resNum = nA * safeDenB; resDen = safeDenA * nB; break;
      }
+
+     if (resDen === 0) return { num: 0, den: 0, mixedWhole: 0, mixedNum: 0, decimal: 0, error: "Division by Zero" };
 
      // Reduce
      const gcd = (a: number, b: number): number => b ? gcd(b, a % b) : a;
@@ -140,36 +146,42 @@ export const FractionCalculator: React.FC = () => {
              <div className="bg-slate-900 text-white rounded-2xl p-10 shadow-xl flex flex-col items-center justify-center h-full min-h-[300px]">
                  <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-6">Result</div>
                  
-                 <div className="flex items-center gap-8">
-                     {/* Mixed Result */}
-                     {result.mixedWhole > 0 && result.mixedNum > 0 && (
-                        <div className="text-center">
-                           <div className="text-sm text-slate-500 mb-2 font-bold uppercase">Mixed</div>
-                           <div className="flex items-center gap-2 text-5xl font-bold">
-                              <span>{result.mixedWhole}</span>
-                              <div className="flex flex-col gap-1 text-2xl text-brand-400">
-                                 <span className="border-b border-brand-400/30">{result.mixedNum}</span>
-                                 <span>{result.den}</span>
-                              </div>
-                           </div>
+                 {result.error ? (
+                    <div className="text-red-400 font-bold text-2xl">{result.error}</div>
+                 ) : (
+                    <>
+                        <div className="flex items-center gap-8">
+                            {/* Mixed Result */}
+                            {result.mixedWhole > 0 && result.mixedNum > 0 && (
+                                <div className="text-center">
+                                <div className="text-sm text-slate-500 mb-2 font-bold uppercase">Mixed</div>
+                                <div className="flex items-center gap-2 text-5xl font-bold">
+                                    <span>{result.mixedWhole}</span>
+                                    <div className="flex flex-col gap-1 text-2xl text-brand-400">
+                                        <span className="border-b border-brand-400/30">{result.mixedNum}</span>
+                                        <span>{result.den}</span>
+                                    </div>
+                                </div>
+                                </div>
+                            )}
+
+                            {result.mixedWhole > 0 && result.mixedNum > 0 && <div className="h-16 w-px bg-white/10"></div>}
+
+                            {/* Improper Result */}
+                            <div className="text-center">
+                                <div className="text-sm text-slate-500 mb-2 font-bold uppercase">Fraction</div>
+                                <div className="flex flex-col gap-1 text-4xl font-bold text-white">
+                                <span className="border-b border-white/20 pb-1">{result.num}</span>
+                                <span>{result.den}</span>
+                                </div>
+                            </div>
                         </div>
-                     )}
 
-                     {result.mixedWhole > 0 && result.mixedNum > 0 && <div className="h-16 w-px bg-white/10"></div>}
-
-                     {/* Improper Result */}
-                     <div className="text-center">
-                        <div className="text-sm text-slate-500 mb-2 font-bold uppercase">Fraction</div>
-                        <div className="flex flex-col gap-1 text-4xl font-bold text-white">
-                           <span className="border-b border-white/20 pb-1">{result.num}</span>
-                           <span>{result.den}</span>
+                        <div className="mt-8 bg-white/10 px-6 py-2 rounded-full font-mono text-lg text-brand-200">
+                            = {result.decimal.toFixed(4)}
                         </div>
-                     </div>
-                 </div>
-
-                 <div className="mt-8 bg-white/10 px-6 py-2 rounded-full font-mono text-lg text-brand-200">
-                    = {result.decimal.toFixed(4)}
-                 </div>
+                    </>
+                 )}
              </div>
          </div>
       </div>

@@ -28,6 +28,9 @@ export const UnitConverter: React.FC = () => {
     };
 
     const convert = () => {
+        // Safety check for empty or invalid input
+        if (isNaN(val)) return 0;
+
         if (category === 'temperature') {
             if (from === to) return val;
             let celsius = val;

@@ -27,9 +27,19 @@ export const CasioCalculator: React.FC = () => {
   const [value, setValue] = useState<number | null>(null);
   const [operator, setOperator] = useState<string | null>(null);
   const [waitingForOperand, setWaitingForOperand] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   // --- Input Logic ---
   const inputDigit = (digit: string) => {
+    if (isError) {
+        setDisplay(digit);
+        setIsError(false);
+        setValue(null);
+        setOperator(null);
+        setWaitingForOperand(false);
+        return;
+    }
+
     if (waitingForOperand) {
       setDisplay(digit);
       setWaitingForOperand(false);
@@ -39,6 +49,14 @@ export const CasioCalculator: React.FC = () => {
   };
 
   const inputDecimal = () => {
+    if (isError) {
+        setDisplay('0.');
+        setIsError(false);
+        setValue(null);
+        setOperator(null);
+        setWaitingForOperand(false);
+        return;
+    }
     if (waitingForOperand) {
       setDisplay('0.');
       setWaitingForOperand(false);
@@ -51,6 +69,7 @@ export const CasioCalculator: React.FC = () => {
 
   const clearEntry = () => {
     setDisplay('0');
+    setIsError(false);
   };
 
   const allClear = () => {
@@ -58,6 +77,7 @@ export const CasioCalculator: React.FC = () => {
     setOperator(null);
     setWaitingForOperand(false);
     setDisplay('0');
+    setIsError(false);
   };
 
   // --- Arithmetic ---
@@ -66,20 +86,32 @@ export const CasioCalculator: React.FC = () => {
       case '+': return a + b;
       case '-': return a - b;
       case '×': return a * b;
-      case '÷': return a / b;
+      case '÷': 
+        if (b === 0) return 'Error';
+        return a / b;
       default: return b;
     }
   };
 
   const handleOperator = (nextOp: string) => {
+    if (isError) return;
     const inputValue = parseFloat(display);
 
     if (value === null) {
       setValue(inputValue);
     } else if (operator && !waitingForOperand) {
       const result = calculate(value, inputValue, operator);
-      setValue(result);
-      setDisplay(String(parseFloat(result.toPrecision(12))));
+      
+      if (result === 'Error') {
+          setDisplay('Error');
+          setIsError(true);
+          setValue(null);
+          setOperator(null);
+          return;
+      }
+
+      setValue(result as number);
+      setDisplay(String(parseFloat((result as number).toPrecision(12))));
     }
 
     setWaitingForOperand(true);
@@ -87,10 +119,20 @@ export const CasioCalculator: React.FC = () => {
   };
 
   const handleEquals = () => {
+    if (isError) return;
     if (operator && value !== null) {
       const inputValue = parseFloat(display);
       const result = calculate(value, inputValue, operator);
-      const formatted = parseFloat(result.toPrecision(12));
+      
+      if (result === 'Error') {
+          setDisplay('Error');
+          setIsError(true);
+          setValue(null);
+          setOperator(null);
+          return;
+      }
+
+      const formatted = parseFloat((result as number).toPrecision(12));
       const resStr = String(formatted);
       
       setDisplay(resStr);
@@ -102,6 +144,7 @@ export const CasioCalculator: React.FC = () => {
 
   // --- Functions ---
   const handlePercent = () => {
+    if (isError) return;
     const current = parseFloat(display);
     if (value !== null && operator) {
       const percentVal = value * (current / 100);
@@ -112,15 +155,20 @@ export const CasioCalculator: React.FC = () => {
   };
 
   const handleSqrt = () => {
+    if (isError) return;
     const current = parseFloat(display);
-    if (current >= 0) {
-      const res = Math.sqrt(current);
-      setDisplay(String(res));
-      setWaitingForOperand(true);
+    if (current < 0) {
+        setDisplay('Error');
+        setIsError(true);
+        return;
     }
+    const res = Math.sqrt(current);
+    setDisplay(String(res));
+    setWaitingForOperand(true);
   };
 
   const handleMemory = (action: 'M+' | 'M-' | 'MR' | 'MC') => {
+    if (isError) return;
     const current = parseFloat(display);
     if (action === 'M+') setMemory(prev => prev + current);
     if (action === 'M-') setMemory(prev => prev - current);
@@ -166,9 +214,10 @@ export const CasioCalculator: React.FC = () => {
             <div className="bg-[#c5dca0] h-24 rounded-lg border-[4px] border-[#444] mb-4 p-3 relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] flex flex-col justify-between">
                {/* Indicators */}
                <div className="flex gap-2 text-[10px] font-bold text-slate-800 opacity-70 font-mono h-3">
+                   {isError && <span className="text-red-900">E</span>}
                    {memory !== 0 && <span>M</span>}
-                   {operator && <span className="border border-slate-600 px-1 rounded-sm">{operator}</span>}
-                   {value !== null && value < 0 && <span>-</span>}
+                   {operator && !isError && <span className="border border-slate-600 px-1 rounded-sm">{operator}</span>}
+                   {value !== null && value < 0 && !isError && <span>-</span>}
                </div>
                
                {/* Main Digits */}

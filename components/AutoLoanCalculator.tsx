@@ -4,6 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 import { Calendar, DollarSign, Car, Percent } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
 import { SEO } from './SEO';
+import { useCurrency } from '../context/CurrencyContext';
 
 interface AmortizationRow {
   date: string;
@@ -14,6 +15,9 @@ interface AmortizationRow {
 }
 
 export const AutoLoanCalculator: React.FC = () => {
+  const { currency } = useCurrency();
+  const symbol = currency.symbol;
+
   // Auto Loan Specific Inputs
   const [vehiclePrice, setVehiclePrice] = useState(35000);
   const [downPayment, setDownPayment] = useState(5000);
@@ -92,7 +96,7 @@ export const AutoLoanCalculator: React.FC = () => {
 
   // Flexbox Input Styles
   const inputContainerClass = "flex items-center bg-white border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 overflow-hidden transition shadow-sm h-12";
-  const iconClass = "pl-3 pr-2 text-slate-400";
+  const iconClass = "pl-3 pr-2 text-slate-400 font-bold";
   const suffixClass = "pr-3 pl-2 text-slate-500 font-bold select-none bg-slate-50 h-full flex items-center border-l border-slate-100";
   const fieldClass = "flex-1 w-full h-full p-2 outline-none font-bold text-black min-w-0 bg-transparent !text-black";
 
@@ -121,7 +125,7 @@ export const AutoLoanCalculator: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Vehicle Price</label>
                 <div className={inputContainerClass}>
-                  <div className={iconClass}><Car size={18} /></div>
+                  <div className={iconClass}>{symbol}</div>
                   <input 
                     type="number" 
                     value={vehiclePrice} 
@@ -136,7 +140,7 @@ export const AutoLoanCalculator: React.FC = () => {
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Down Payment</label>
                   <div className={inputContainerClass}>
-                     <div className={iconClass}><DollarSign size={16}/></div>
+                     <div className={iconClass}>{symbol}</div>
                      <input 
                       type="number" 
                       value={downPayment} 
@@ -149,7 +153,7 @@ export const AutoLoanCalculator: React.FC = () => {
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Trade-in</label>
                   <div className={inputContainerClass}>
-                     <div className={iconClass}><DollarSign size={16}/></div>
+                     <div className={iconClass}>{symbol}</div>
                      <input 
                       type="number" 
                       value={tradeInValue} 
@@ -178,7 +182,7 @@ export const AutoLoanCalculator: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Fees (Title/Reg)</label>
                 <div className={inputContainerClass}>
-                  <div className={iconClass}><DollarSign size={16}/></div>
+                  <div className={iconClass}>{symbol}</div>
                   <input 
                     type="number" 
                     value={fees} 
@@ -251,7 +255,7 @@ export const AutoLoanCalculator: React.FC = () => {
                 <div className="relative z-10 min-w-0">
                   <p className="text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">Monthly Payment</p>
                   <div className="text-3xl lg:text-4xl font-bold tracking-tight mb-1 break-words">
-                    ${calculations.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                    {symbol}{calculations.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </div>
                   <p className="text-xs text-brand-400 font-medium">{loanTermMonths} month term</p>
                 </div>
@@ -264,7 +268,7 @@ export const AutoLoanCalculator: React.FC = () => {
                 <div className="min-w-0">
                   <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Total Interest</p>
                   <div className="text-2xl font-bold text-amber-500 break-words">
-                    ${calculations.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                    {symbol}{calculations.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </div>
                 </div>
                 <p className="text-xs text-slate-400 mt-2">Cost of financing</p>
@@ -274,7 +278,7 @@ export const AutoLoanCalculator: React.FC = () => {
                 <div className="min-w-0">
                   <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Amount Financed</p>
                   <div className="text-2xl font-bold text-slate-800 break-words">
-                    ${calculations.loanAmount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                    {symbol}{calculations.loanAmount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </div>
                 </div>
                 <p className="text-xs text-slate-400 mt-2">Loan principal</p>
@@ -287,27 +291,27 @@ export const AutoLoanCalculator: React.FC = () => {
                  <div className="space-y-3 text-sm">
                     <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
                        <span className="text-slate-600 font-medium">Vehicle Price</span>
-                       <span className="font-bold text-slate-900">${vehiclePrice.toLocaleString()}</span>
+                       <span className="font-bold text-slate-900">{symbol}{vehiclePrice.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between items-center p-3">
                        <span className="text-slate-600 font-medium">Sales Tax ({salesTaxRate}%)</span>
-                       <span className="font-bold text-slate-900">+ ${Math.round(calculations.salesTaxAmount).toLocaleString()}</span>
+                       <span className="font-bold text-slate-900">+ {symbol}{Math.round(calculations.salesTaxAmount).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
                        <span className="text-slate-600 font-medium">Fees</span>
-                       <span className="font-bold text-slate-900">+ ${fees.toLocaleString()}</span>
+                       <span className="font-bold text-slate-900">+ {symbol}{fees.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between items-center p-3">
                        <span className="text-slate-600 font-medium">Down Payment</span>
-                       <span className="font-bold text-emerald-600">- ${downPayment.toLocaleString()}</span>
+                       <span className="font-bold text-emerald-600">- {symbol}{downPayment.toLocaleString()}</span>
                     </div>
                      <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
                        <span className="text-slate-600 font-medium">Trade-in Value</span>
-                       <span className="font-bold text-emerald-600">- ${tradeInValue.toLocaleString()}</span>
+                       <span className="font-bold text-emerald-600">- {symbol}{tradeInValue.toLocaleString()}</span>
                     </div>
                     <div className="border-t border-slate-200 my-2 pt-3 flex justify-between items-center">
                        <span className="text-slate-800 font-bold uppercase text-xs tracking-wide">Amount Financed</span>
-                       <span className="text-brand-600 text-lg font-bold">${Math.round(calculations.loanAmount).toLocaleString()}</span>
+                       <span className="text-brand-600 text-lg font-bold">{symbol}{Math.round(calculations.loanAmount).toLocaleString()}</span>
                     </div>
                  </div>
              </div>
@@ -330,7 +334,7 @@ export const AutoLoanCalculator: React.FC = () => {
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(value: number) => `$${Math.round(value).toLocaleString()}`} />
+                      <Tooltip formatter={(value: number) => `${symbol}${Math.round(value).toLocaleString()}`} />
                       <Legend verticalAlign="bottom" height={36}/>
                     </PieChart>
                   </ResponsiveContainer>
@@ -362,9 +366,9 @@ export const AutoLoanCalculator: React.FC = () => {
                          {calculations.schedule.map((row, i) => (
                             <tr key={i}>
                                <td className="px-4 py-2 font-medium">{row.date}</td>
-                               <td className="px-4 py-2 text-slate-600">${row.payment.toFixed(2)}</td>
-                               <td className="px-4 py-2 text-amber-600">${row.interest.toFixed(2)}</td>
-                               <td className="px-4 py-2 text-right font-bold text-slate-900">${row.balance.toFixed(2)}</td>
+                               <td className="px-4 py-2 text-slate-600">{symbol}{row.payment.toFixed(2)}</td>
+                               <td className="px-4 py-2 text-amber-600">{symbol}{row.interest.toFixed(2)}</td>
+                               <td className="px-4 py-2 text-right font-bold text-slate-900">{symbol}{row.balance.toFixed(2)}</td>
                             </tr>
                          ))}
                       </tbody>

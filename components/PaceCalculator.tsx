@@ -20,9 +20,10 @@ export const PaceCalculator: React.FC = () => {
 
   // Logic
   const getResult = () => {
-    const totalTimeSec = (hours * 3600) + (mins * 60) + secs;
-    const distanceKm = distUnit === 'km' ? dist : dist * 1.60934;
-    const paceSecPerKm = (paceMins * 60 + paceSecs) * (paceUnit === 'km' ? 1 : 1.60934);
+    // Force positive values
+    const totalTimeSec = (Math.abs(hours) * 3600) + (Math.abs(mins) * 60) + Math.abs(secs);
+    const distanceKm = distUnit === 'km' ? Math.abs(dist) : Math.abs(dist) * 1.60934;
+    const paceSecPerKm = (Math.abs(paceMins) * 60 + Math.abs(paceSecs)) * (paceUnit === 'km' ? 1 : 1.60934);
 
     if (mode === 'pace') {
        if (distanceKm <= 0 || totalTimeSec <= 0) return null;

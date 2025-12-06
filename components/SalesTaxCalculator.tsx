@@ -2,8 +2,12 @@
 import React, { useState } from 'react';
 import { DollarSign, ShoppingCart, Receipt } from 'lucide-react';
 import { SEO } from './SEO';
+import { useCurrency } from '../context/CurrencyContext';
 
 export const SalesTaxCalculator: React.FC = () => {
+  const { currency } = useCurrency();
+  const symbol = currency.symbol;
+
   const [amount, setAmount] = useState<number>(100);
   const [taxRate, setTaxRate] = useState<number>(7.25);
   const [isReverse, setIsReverse] = useState(false);
@@ -24,7 +28,7 @@ export const SalesTaxCalculator: React.FC = () => {
 
   // Styles
   const inputContainerClass = "flex items-center bg-white border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 overflow-hidden transition shadow-sm h-12";
-  const iconClass = "pl-3 pr-2 text-slate-400";
+  const iconClass = "pl-3 pr-2 text-slate-400 font-bold";
   const fieldClass = "flex-1 w-full h-full p-2 outline-none font-bold text-black min-w-0 bg-transparent !text-black";
 
   return (
@@ -71,7 +75,7 @@ export const SalesTaxCalculator: React.FC = () => {
                       {isReverse ? 'Total Price (Inc. Tax)' : 'Price Before Tax'}
                     </label>
                     <div className={inputContainerClass}>
-                       <div className={iconClass}><DollarSign size={18}/></div>
+                       <div className={iconClass}>{symbol}</div>
                        <input 
                         type="number" 
                         value={amount} 
@@ -120,7 +124,7 @@ export const SalesTaxCalculator: React.FC = () => {
                  <div className="relative z-10">
                     <p className="text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">Total Price</p>
                     <div className="text-3xl lg:text-4xl font-bold tracking-tight mb-1">
-                       ${result.total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                       {symbol}{result.total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                     </div>
                  </div>
                  <div className="absolute right-0 bottom-0 p-4 opacity-10 group-hover:opacity-20 transition">
@@ -132,7 +136,7 @@ export const SalesTaxCalculator: React.FC = () => {
                  <div>
                     <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Tax Amount</p>
                     <div className="text-2xl font-bold text-amber-500">
-                       ${result.tax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                       {symbol}{result.tax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                     </div>
                  </div>
                  <p className="text-xs text-slate-400 mt-2">At {taxRate}% rate</p>
@@ -142,7 +146,7 @@ export const SalesTaxCalculator: React.FC = () => {
                  <div>
                     <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">Net Price</p>
                     <div className="text-2xl font-bold text-slate-800">
-                       ${result.preTax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                       {symbol}{result.preTax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                     </div>
                  </div>
                  <p className="text-xs text-slate-400 mt-2">Before Tax</p>
@@ -161,16 +165,16 @@ export const SalesTaxCalculator: React.FC = () => {
                   <div className="space-y-4 text-sm">
                      <div className="flex justify-between items-center">
                         <span className="text-slate-500 font-medium">Subtotal</span>
-                        <span className="text-slate-900 font-bold text-lg">${result.preTax.toFixed(2)}</span>
+                        <span className="text-slate-900 font-bold text-lg">{symbol}{result.preTax.toFixed(2)}</span>
                      </div>
                      <div className="flex justify-between items-center">
                         <span className="text-slate-500 font-medium">Tax ({taxRate}%)</span>
-                        <span className="text-amber-600 font-bold text-lg">+ ${result.tax.toFixed(2)}</span>
+                        <span className="text-amber-600 font-bold text-lg">+ {symbol}{result.tax.toFixed(2)}</span>
                      </div>
                      <div className="my-2 border-t-2 border-dashed border-slate-300"></div>
                      <div className="flex justify-between items-center pt-2">
                         <span className="text-slate-800 font-bold uppercase">Total</span>
-                        <span className="text-brand-600 font-extrabold text-2xl">${result.total.toFixed(2)}</span>
+                        <span className="text-brand-600 font-extrabold text-2xl">{symbol}{result.total.toFixed(2)}</span>
                      </div>
                   </div>
                </div>
